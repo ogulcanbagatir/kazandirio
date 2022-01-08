@@ -11,6 +11,7 @@ console.log('height: ' + height)
 
 import Tab1 from './Tab1';
 import Tab2 from './Tab2';
+import Tab3 from './Tab3';
 
 export default class Home extends React.PureComponent{
   constructor(props){
@@ -21,8 +22,9 @@ export default class Home extends React.PureComponent{
   }
 
   onTabPressed = (index) => {
-    this.setState({selectedTab: index})
-    this.scrollRef.scrollTo({x: width * index, y: 0, animated: false})
+    this.setState({selectedTab: index}, () => {
+      this.scrollRef.scrollTo({x: width * index, y: 0, animated: false})
+    })
   }
 
   render(){
@@ -36,26 +38,29 @@ export default class Home extends React.PureComponent{
           ref={ref => this.scrollRef = ref}
         >
           <Tab1 navigation={this.props.navigation}/>
-          <Tab2/>
+          <Tab2 navigation={this.props.navigation}/>
+          <Tab3 navigation={this.props.navigation}/>
         </ScrollView>
         <View style={styles.tabContainer}>
           <TouchableOpacity activeOpacity={1} style={[styles.tabButton]} onPress={()=>this.onTabPressed(0)}>
             <Ionicons size={24} name='home' color={this.state.selectedTab === 0 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha1}/>
-            <Text style={[FontStyles.footnoteBold, {color: this.state.selectedTab === 0 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha1, marginTop: 5}]}>
+            <Text style={[FontStyles.footnoteBold, {fontWeight: "600", color: this.state.selectedTab === 0 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha06, marginTop: 5}]}>
               Kampanyalar
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity activeOpacity={1} style={styles.tabButton} onPress={()=>console.log('aaaa')}>
+
+          <TouchableOpacity activeOpacity={1} style={styles.tabButton} onPress={()=>this.onTabPressed(1)}>
             <View style={styles.iconContainer}>
-              <Ionicons size={24} name='qr-code' color={'white'}/>
+              <Ionicons size={30} name={this.state.selectedTab == 1 ? "headset" : "headset-outline"} color={'white'}/>
             </View>
-            <Text style={[FontStyles.footnoteBold, {color: Colors.secondaryDark.alpha1, marginTop: width * 0.075}]}>
-              Okut Kazan
+            <Text style={[FontStyles.footnoteBold, {color: this.state.selectedTab === 1 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha06, marginTop: width * 0.075}]}>
+              KazandiRio
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity activeOpacity={1} style={styles.tabButton} onPress={()=>this.onTabPressed(1)}>
-            <Ionicons size={24} name='wallet' color={this.state.selectedTab === 1 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha1}/>
-            <Text style={[FontStyles.footnoteBold, {color: this.state.selectedTab === 1 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha1, marginTop: 5}]}>
+
+          <TouchableOpacity activeOpacity={1} style={styles.tabButton} onPress={()=>this.onTabPressed(2)}>
+            <Ionicons size={24} name='wallet' color={this.state.selectedTab === 2 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha1}/>
+            <Text style={[FontStyles.footnoteBold, {fontWeight: "600", color: this.state.selectedTab === 2 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha06, marginTop: 5}]}>
               Cüzdanım
             </Text>
           </TouchableOpacity>
@@ -77,8 +82,8 @@ const styles = StyleSheet.create({
     height: IsphoneX ? 64 + 20 : 64,
     backgroundColor: 'white',
     flexDirection: 'row',
-    borderTopWidth: 0.5,
-    borderColor: Colors.secondaryDark.alpha05,
+    borderTopWidth: 1,
+    borderColor: Colors.secondaryDark.alpha01,
     paddingBottom: IsphoneX ? 16 : 0
   },
   tabButton: {

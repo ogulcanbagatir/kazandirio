@@ -308,11 +308,15 @@ export default class Tab2 extends React.PureComponent {
         {
           this.state.showSpotifyView &&
           <Animated.View style={[styles.spotifyContainer, {opacity: this.spotifyOpacityValue}]}>
-            <Image source={require("../assets/spotify.png")} resizeMode='cover' style={{width:  width * 0.33, shadowColor: '#1DB954', shadowOpacity: 0.75, shadowRadius: 10, height: width* 0.33, marginBottom: width * 0.033, alignSelf: "center"}} />
+            {/* <Image source={require("../assets/1.png")} resizeMode='cover' style={{width:  width * 0.125,  height: width* 0.125, left: width * 0.2, top: width * 0.1, position: "absolute"}} />
+            <Image source={require("../assets/2.png")} resizeMode='cover' style={{width:  width * 0.1,  height: width* 0.1, left: width * 0.15, top: width * 0.3, position: "absolute"}} />
+            <Image source={require("../assets/3.png")} resizeMode='cover' style={{width:  width * 0.1,  height: width* 0.1, right: width * 0.2, top: width * 0.1, position: "absolute"}} />
+            <Image source={require("../assets/4.png")} resizeMode='cover' style={{width:  width * 0.1,  height: width* 0.1, right: width * 0.15, top: width * 0.3, position: "absolute"}} /> */}
+            <Image source={require("../assets/spotify.png")} resizeMode='cover' style={{width:  width * 0.25, shadowColor: '#1DB954', shadowOpacity: 1, shadowRadius: 6, height: width* 0.25, marginBottom: width * 0.033, alignSelf: "center"}} />
             <Text style={[fontStyles.title1, {color: Colors.pepsiBlack.alpha1, alignSelf: 'center'}]}>
               {"Dinle Kazan!"}
             </Text>
-            <Text style={[fontStyles.body, {color: Colors.pepsiGrayText.alpha1, marginTop: width * 0.075, alignSelf: 'center', textAlign: 'center', lineHeight: 25, fontWeight: '400'}]}>
+            <Text style={[fontStyles.body, {color: Colors.pepsiGrayText.alpha1, marginTop: width * 0.05, alignSelf: 'center', textAlign: 'center', lineHeight: 25, fontWeight: '400'}]}>
               {'Spotify hesabına bağlan, listeni oluştur ve şarkı dinleyerek kazanmaya başla.'}
             </Text>
             <TouchableOpacity style={styles.spotifyButton} activeOpacity={0.9} onPress={this.makeCall}>
@@ -507,7 +511,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowOffset: {width: 1, height: 1},
     shadowRadius: 10,
-    marginTop: width * 0.15,
+    marginTop: width * 0.1,
     marginBottom: width *0.1
   },
   spotifyContainer: {

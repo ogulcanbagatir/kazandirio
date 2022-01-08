@@ -197,7 +197,7 @@ const API = {
 	},
 	setProfile: function(profile){
 		return this.makeHttpRequest(`/auth/profile`, 'PUT', profile);
-	}
+	},
 };
 
 module.exports = API;

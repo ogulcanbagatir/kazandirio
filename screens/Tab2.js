@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Colors from '../utils/Colors';
 import { width, height, statusBarHeight } from '../utils/Constants'
 import fontStyles from '../utils/FontStyles';
@@ -179,14 +179,21 @@ export default class Tab2 extends React.PureComponent {
   header = () => {
     return (
       <View style={styles.header}>
-        <Text style={[fontStyles.largeTitleLight, {color: Colors.pepsiDarkBlue.alpha1}]}>
-          KazandiRio
-        </Text>
+
+        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: width * 0.868}}>
+          <Image source={require("../assets/kazandirioLogo.png")} style={{width: width * 0.35, opacity: 0.85, alignItems: "center", height: width * 0.35 * 0.271062271,}} resizeMode='contain' />
+          <TouchableOpacity activeOpacity={0.9} style={styles.loginButton} onPress={()=>props.navigation.navigate(user ? 'Profile' : 'Login')}>
+            <Ionicons name='person-sharp' size={16} color={'white'}/>
+          </TouchableOpacity>
+        </View>
         
+        {/* <Text style={[fontStyles.largeTitleLight, {color: Colors.pepsiYellow.alpha1}]}>
+          Dinle Kazan
+        </Text>  */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color={Colors.pepsiBlue.alpha1} />
+          <Ionicons name="search" size={20} color={Colors.white.alpha08}/>
           <TextInput
-            style={[fontStyles.body, styles.textInput]}
+            style={[fontStyles.body, styles.textInput, {fontWeight: "500"}]}
             placeholder='Arayan Bulur'
             onChangeText={this.onSearchChange}
             onFocus={this.openModal}
@@ -198,7 +205,7 @@ export default class Tab2 extends React.PureComponent {
             ["Müzik", "Podcast", "Game", "YouTube"].map((item, index) => {
               return ( 
                 <TouchableOpacity key={index + "x" + item} onPress={() => this.onPressHeader(index)} style={styles.headerButton} activeOpacity={0.9}>
-                  <Text style={[fontStyles.calloutBold, {color: this.state.selectedTab == index ? Colors.pepsiBlue.alpha1 : Colors.pepsiGray.alpha07}]}>
+                  <Text style={[fontStyles.calloutBold, {color: this.state.selectedTab == index ? Colors.pepsiYellow.alpha1 : Colors.white.alpha04}]}>
                     {item}
                   </Text>
                 </TouchableOpacity>
@@ -293,7 +300,7 @@ export default class Tab2 extends React.PureComponent {
               {
                 this.state.playlists.map((item, index) => {
                   return (
-                    <TouchableOpacity key={index + "xxx"} onPress={() => {}} style={styles.pepsiCardButton} activeOpacity={1}>
+                    <TouchableOpacity key={index + "xxx" + index} onPress={() => {}} style={styles.pepsiCardButton} activeOpacity={1}>
                       <View style={styles.pepsiCardInnerContainer}>
                         <Image source={{uri: item.images[0].url}} style={styles.pepsiCardImage} resizeMode="cover" />
                         <LinearGradient colors={[Colors.pepsiDarkBlue.alpha09, Colors.pepsiDarkBlue.alpha01]} style={styles.pepsiCardGradient} start={[0.5, 1]} end={[0.5, 0]} />
@@ -321,7 +328,7 @@ export default class Tab2 extends React.PureComponent {
             {
               this.state.myList.map((item, index) => {
                 return (
-                  <TouchableOpacity style={styles.myListRowContainer}>
+                  <TouchableOpacity key={index + "ddd"} style={styles.myListRowContainer}>
                     <View style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}}>
                       <Image source={require("../assets/messi.jpg")} style={{width: 44, height: 44, position: "absolute", top: 0, opacity: 0.55}} resizeMode="cover" />
                       <Ionicons name={"play"} color={Colors.pepsiYellow.alpha1} size={20}/>
@@ -343,7 +350,7 @@ export default class Tab2 extends React.PureComponent {
                       </View>
                     </View>
 
-                    <TouchableOpacity style={styles.cancelButtonRow}>
+                    <TouchableOpacity activeOpacity={1.0} onPress={() => this.deleteListRow() } style={styles.cancelButtonRow}>
                       <Feather name="x" color={Colors.pepsiBlack.alpha1} size={18}/>
                     </TouchableOpacity>
                   </TouchableOpacity>
@@ -357,6 +364,7 @@ export default class Tab2 extends React.PureComponent {
         {
           this.state.showSpotifyView &&
           <Animated.View style={[styles.spotifyContainer, {opacity: this.spotifyOpacityValue}]}>
+            <Image source={require("../assets/spotify.png")} resizeMode='cover' style={{width:  width * 0.33, shadowColor: '#1DB954', shadowOpacity: 0.75, shadowRadius: 10, height: width* 0.33, marginBottom: width * 0.033, alignSelf: "center"}} />
             <Text style={[fontStyles.title1, {color: Colors.pepsiBlack.alpha1, alignSelf: 'center'}]}>
               {"Dinle Kazan!"}
             </Text>
@@ -369,7 +377,6 @@ export default class Tab2 extends React.PureComponent {
                 {"Spotify'a Bağlan"}
               </Text>
             </TouchableOpacity>
-            {/* BURAYA AMKK */}
           </Animated.View>
         }
 
@@ -438,10 +445,24 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: statusBarHeight,
     width: width,
+    backgroundColor: Colors.pepsiDarkBlue.alpha1,
     paddingHorizontal: width * 0.066,
     paddingTop: width * 0.2,
     borderBottomColor: Colors.pepsiGray.alpha01,
     borderBottomWidth: 0,
+  },
+
+  loginButton: {
+    borderRadius: 100,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: Colors.pepsiDarkBlue.alpha1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: 'white',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.3,
+    shadowRadius: 3
   },
   myListRowContainer: {
     width: width * 0.868,
@@ -503,7 +524,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: Colors.pepsiBg.alpha1,
+    backgroundColor: Colors.white.alpha02,
     marginTop: width * 0.033, 
   },
   textInput: {
@@ -514,19 +535,19 @@ const styles = StyleSheet.create({
   headerOptions: {
     flexDirection: "row",
     width: "100%",
-    marginTop: width * 0.033
+    marginTop: width * 0.04
   },
   headerButton: {
     flex: 1,
     alignItems: "center",
     paddingVertical: width * 0.033,
-    paddingBottom: width * 0.025,
+    paddingBottom: width * 0.05,
   },
   headerBottomLine: {
     width: (width - (width * 0.066 * 2))/4,
     position: "absolute",
-    bottom: -3,
-    height: 4, 
+    bottom: -2,
+    height: 5, 
     borderRadius: 10, 
     backgroundColor: Colors.pepsiBlue.alpha1
   },
@@ -543,7 +564,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowOffset: {width: 1, height: 1},
     shadowRadius: 10,
-    marginTop: width * 0.15
+    marginTop: width * 0.15,
+    marginBottom: width *0.1
   },
   spotifyContainer: {
     justifyContent: 'center', 

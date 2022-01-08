@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { width, height } from '../utils/Constants'
 import {Ionicons} from '@expo/vector-icons'
 import Colors from '../utils/Colors'
@@ -17,12 +17,13 @@ export default class Home extends React.PureComponent{
   constructor(props){
     super(props)
     this.state={
-      selectedTab: 0
+      selectedTab: 0,
+      barStyle: "light-content"
     }
   }
 
   onTabPressed = (index) => {
-    this.setState({selectedTab: index}, () => {
+    this.setState({selectedTab: index, barStyle: index == 1 ? "light-content" : "dark-content"}, () => {
       this.scrollRef.scrollTo({x: width * index, y: 0, animated: false})
     })
   }
@@ -30,6 +31,7 @@ export default class Home extends React.PureComponent{
   render(){
     return (
       <View style={styles.container}>
+        <StatusBar barStyle={this.state.barStyle} animated />
         <ScrollView 
           style={{flex: 1}}
           horizontal

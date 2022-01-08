@@ -44,15 +44,23 @@ export default class Tab2 extends React.PureComponent {
   header = () => {
     return (
       <View style={styles.header}>
-        <Text style={[fontStyles.largeTitleLight, {color: Colors.pepsiDarkBlue.alpha1}]}>
-          KazandiRio
-        </Text>
+
+        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: width * 0.868}}>
+          <Image source={require("../assets/kazandirioLogo.png")} style={{width: width * 0.35, opacity: 0.85, alignItems: "center", height: width * 0.35 * 0.271062271,}} resizeMode='contain' />
+          <TouchableOpacity activeOpacity={0.9} style={styles.loginButton} onPress={()=>props.navigation.navigate(user ? 'Profile' : 'Login')}>
+            <Ionicons name='person-sharp' size={16} color={'white'}/>
+          </TouchableOpacity>
+        </View>
         
+        {/* <Text style={[fontStyles.largeTitleLight, {color: Colors.pepsiYellow.alpha1}]}>
+          Dinle Kazan
+        </Text>  */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color={Colors.pepsiBlue.alpha1} />
+          <Ionicons name="search" size={20} color={Colors.white.alpha08}/>
           <TextInput
-            style={[fontStyles.body, styles.textInput, {}]}
+            style={[fontStyles.body, styles.textInput, {fontWeight: "500"}]}
             placeholder='Arayan Bulur'
+            placeholderTextColor={Colors.white.alpha04}
             onChangeText={text => {}}
           />
         </View>
@@ -62,7 +70,7 @@ export default class Tab2 extends React.PureComponent {
             ["Müzik", "Podcast", "Game", "YouTube"].map((item, index) => {
               return ( 
                 <TouchableOpacity key={index + "x" + item} onPress={() => this.onPressHeader(index)} style={styles.headerButton} activeOpacity={0.9}>
-                  <Text style={[fontStyles.calloutBold, {color: this.state.selectedTab == index ? Colors.pepsiBlue.alpha1 : Colors.pepsiGray.alpha07}]}>
+                  <Text style={[fontStyles.calloutBold, {color: this.state.selectedTab == index ? Colors.pepsiYellow.alpha1 : Colors.white.alpha04}]}>
                     {item}
                   </Text>
                 </TouchableOpacity>
@@ -225,13 +233,25 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: statusBarHeight,
     width: width,
+    backgroundColor: Colors.pepsiDarkBlue.alpha1,
     paddingHorizontal: width * 0.066,
     paddingTop: width * 0.2,
     borderBottomColor: Colors.pepsiGray.alpha01,
     borderBottomWidth: 0,
   },
 
-
+  loginButton: {
+    borderRadius: 100,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: Colors.pepsiDarkBlue.alpha1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: 'white',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.3,
+    shadowRadius: 3
+  },
   myListRowContainer: {
     width: width * 0.868,
     alignSelf: "center",
@@ -295,7 +315,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: Colors.pepsiBg.alpha1,
+    backgroundColor: Colors.white.alpha02,
     marginTop: width * 0.033, 
   },
   textInput: {
@@ -306,20 +326,20 @@ const styles = StyleSheet.create({
   headerOptions: {
     flexDirection: "row",
     width: "100%",
-    marginTop: width * 0.033
+    marginTop: width * 0.04
   },
   headerButton: {
     flex: 1,
     alignItems: "center",
     paddingVertical: width * 0.033,
-    paddingBottom: width * 0.025,
+    paddingBottom: width * 0.05,
   },
   headerBottomLine: {
     width: (width - (width * 0.066 * 2))/4,
     position: "absolute",
-    bottom: -3,
-    height: 4, 
+    bottom: -2,
+    height: 5, 
     borderRadius: 10, 
-    backgroundColor: Colors.pepsiBlue.alpha1
+    backgroundColor: Colors.pepsiYellow.alpha1
   }
 })

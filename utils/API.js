@@ -198,6 +198,9 @@ const API = {
 	setProfile: function(profile){
 		return this.makeHttpRequest(`/auth/profile`, 'PUT', profile);
 	},
+	getWallet: function(){
+		return this.makeHttpRequest(`/wallet`, 'GET');
+	}
 };
 
 module.exports = API;

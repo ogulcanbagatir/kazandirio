@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Colors from '../utils/Colors';
 import { width, height, statusBarHeight } from '../utils/Constants'
 import fontStyles from '../utils/FontStyles';
@@ -75,19 +75,11 @@ export default class Tab2 extends React.PureComponent {
     )
   }
 
+  deleteListRow = () => {
+    Alert.alert("Şarkıyı Kaldır", "Bu şarkıyı listenizden kaldırmak istediğinizden emin misiniz?", [{text: "Kaldır", style: "default"}, {text: "Vazgeç", style: "cancel"}])
+  }
 
   screen1 = () => {
-
-    if(true){
-      return (
-        <View style={[styles.screenContainer, {}]}>
-          <Image blurRadius={15} source={require("../assets/blurbg.png")} style={{position: "absolute", opacity: 0.6, top: 0, height: "100%", width: width, bottom: 0,}} resizeMode='cover'/>
-
-          {/* BURAYA AMKK */}
-
-        </View>
-      )
-    }
     return (
       <View style={styles.screenContainer}>
         <ScrollView
@@ -157,7 +149,7 @@ export default class Tab2 extends React.PureComponent {
                       </View>
                     </View>
 
-                    <TouchableOpacity style={styles.cancelButtonRow}>
+                    <TouchableOpacity activeOpacity={1.0} onPress={() => this.deleteListRow() } style={styles.cancelButtonRow}>
                       <Feather name="x" color={Colors.pepsiBlack.alpha1} size={18}/>
                     </TouchableOpacity>
                   </TouchableOpacity>

@@ -92,16 +92,16 @@ export default function Tab3(props){
             gifts.map((item, index)=>{
               console.log(item)
               return (
-                <View style={styles.gift}>
+                <View key={index + "dde"} style={styles.gift}>
                   <View style={styles.giftHeader}>
-                    <Text style={[fontStyles.footnoteLight, {color: Colors.pepsiDarkBlue.alpha1}]}>
+                    <Text style={[fontStyles.footnoteLight, {  marginRight: 20,color: Colors.pepsiDarkBlue.alpha1}]}>
                       {item.campaignName}
                     </Text>
                   </View>
-                  <View style={{flexDirection: 'row', width: '100%', paddingHorizontal: width * 0.033, paddingVertical: width * 0.05, alignItems: 'center',}}>
+                  <View style={{flexDirection: 'row', paddingHorizontal: width * 0.033, paddingVertical: width * 0.05, alignItems: 'center',}}>
                     <Image source={{uri: item.imageUrl}} style={{width: width * 0.25, height: width * 0.25}}/>
-                    <View style={{marginLeft: width * 0.05}}>
-                      <Text style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1}]}>
+                    <View style={{marginLeft: width * 0.05, flex: 1}}>
+                      <Text style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1, lineHeight: 28, marginRight: 20}]}>
                         {item.name}
                       </Text>
                       <Text style={[fontStyles.subhead2, {color: Colors.pepsiBlack.alpha1, marginTop: width * 0.05}]}>
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     height: 44,
     flexDirection: 'row',
-    backgroundColor: Colors.pepsiGray.alpha05,
+    backgroundColor: Colors.pepsiGray.alpha02,
     overflow: 'hidden',
     marginTop: width * 0.05
   },
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   indicator: {
     width: '50%',
     height: '100%',
-    backgroundColor: Colors.pepsiDarkBlue.alpha1,
+    backgroundColor: Colors.pepsiDarkOranj.alpha1,
     position: 'absolute'
   },
   headerContainer: {
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     paddingBottom: width * 0.05
   },
   gift: {
-    width: '100%',
+    width: width * 0.868,
     borderRadius: 10,
     backgroundColor: 'white',
     marginTop: width * 0.05

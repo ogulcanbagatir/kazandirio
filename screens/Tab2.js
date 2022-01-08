@@ -244,7 +244,7 @@ export default class Tab2 extends React.PureComponent {
               {
                 [1,2,3,4,5].map((item, index) => {
                   return (
-                    <TouchableOpacity key={index + "xxx"} onPress={() => {}} style={styles.pepsiCardButton} activeOpacity={1}>
+                    <TouchableOpacity key={index + "xxx" + index} onPress={() => {}} style={styles.pepsiCardButton} activeOpacity={1}>
                       <View style={styles.pepsiCardInnerContainer}>
                         <Image source={require("../assets/messi.jpg")} style={styles.pepsiCardImage} resizeMode="cover" />
                         <LinearGradient colors={[Colors.pepsiDarkBlue.alpha09, Colors.pepsiDarkBlue.alpha01]} style={styles.pepsiCardGradient} start={[0.5, 1]} end={[0.5, 0]} />
@@ -272,7 +272,7 @@ export default class Tab2 extends React.PureComponent {
             {
               this.state.myList.map((item, index) => {
                 return (
-                  <TouchableOpacity style={styles.myListRowContainer}>
+                  <TouchableOpacity key={index + "ddd"} style={styles.myListRowContainer}>
                     <View style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}}>
                       <Image source={require("../assets/messi.jpg")} style={{width: 44, height: 44, position: "absolute", top: 0, opacity: 0.55}} resizeMode="cover" />
                       <Ionicons name={"play"} color={Colors.pepsiYellow.alpha1} size={20}/>
@@ -308,6 +308,7 @@ export default class Tab2 extends React.PureComponent {
         {
           this.state.showSpotifyView &&
           <Animated.View style={[styles.spotifyContainer, {opacity: this.spotifyOpacityValue}]}>
+            <Image source={require("../assets/spotify.png")} resizeMode='cover' style={{width:  width * 0.33, shadowColor: '#1DB954', shadowOpacity: 0.75, shadowRadius: 10, height: width* 0.33, marginBottom: width * 0.033, alignSelf: "center"}} />
             <Text style={[fontStyles.title1, {color: Colors.pepsiBlack.alpha1, alignSelf: 'center'}]}>
               {"Dinle Kazan!"}
             </Text>
@@ -320,7 +321,6 @@ export default class Tab2 extends React.PureComponent {
                 {"Spotify'a Bağlan"}
               </Text>
             </TouchableOpacity>
-            {/* BURAYA AMKK */}
           </Animated.View>
         }
 
@@ -507,7 +507,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowOffset: {width: 1, height: 1},
     shadowRadius: 10,
-    marginTop: width * 0.15
+    marginTop: width * 0.15,
+    marginBottom: width *0.1
   },
   spotifyContainer: {
     justifyContent: 'center', 

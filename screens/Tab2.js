@@ -210,7 +210,7 @@ export default class Tab2 extends React.PureComponent {
           <Ionicons name="search" size={20} color={Colors.white.alpha08}/>
           <TextInput
             style={[fontStyles.body, styles.textInput, {fontWeight: "500", color: 'white'}]}
-            placeholder='Arayan Bulur'
+            placeholder='Ara..'
             placeholderTextColor="rgb(160,160,160)"
             onChangeText={this.onSearchChange}
             onFocus={()=>this.transformModal(1)}
@@ -375,7 +375,7 @@ export default class Tab2 extends React.PureComponent {
           contentContainerStyle={{paddingVertical: width * 0.075}}
         >
           <Text style={[fontStyles.title2, {marginLeft: width * 0.066, color: Colors.pepsiBlack.alpha1}]}>
-            Sana Özel
+            KazandıRio Listeleri
           </Text>
           <View style={{width: width, alignSelf: "baseline", paddingVertical: width * 0.033, paddingBottom: width * 0.066}}>
             <ScrollView

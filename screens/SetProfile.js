@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { StyleSheet, View , Text, TouchableOpacity, TextInput, Keyboard, ScrollView, KeyboardAvoidingView} from 'react-native';
 import Colors from '../utils/Colors';
 import { width } from '../utils/Constants'
@@ -8,6 +8,7 @@ import BackButton from '../components/BackButton';
 import API from '../utils/API'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
+import {UserContext} from '../utils/Context'
 
 
 const inputTypes = [
@@ -24,6 +25,7 @@ export default function SetProfile(props){
   const [email, setEmail] = useState('')
   const [show, setShow] = useState(false)
   const [date, setDate] = useState(new Date('January 1, 2000'))
+  const {user, setUser} = useContext(UserContext)
 
   const submit = () => {
     let user = {
@@ -33,19 +35,12 @@ export default function SetProfile(props){
       email: email
     }
 
-    console.log(user)
-
     API.setProfile(user).then((res)=>{
+      setUser(res)
       props.navigation.navigate('Home')
       console.log(res)
     })  
   }
-
-  useEffect(()=> {
-    API.getCurrentSessionId().then((a)=>{
-      console.log(a)
-    })
-  },[])
 
   const onChangeText = (text,index) => {
     if(index === 0){

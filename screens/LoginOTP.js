@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View , Text, TouchableOpacity, TextInput, Keyboard } from 'react-native';
 import Colors from '../utils/Colors';
 import { width } from '../utils/Constants'
@@ -6,10 +6,12 @@ import fontStyles from '../utils/FontStyles';
 import Constants  from 'expo-constants';
 import BackButton from '../components/BackButton';
 import API from '../utils/API'
+import {UserContext} from '../utils/Context'
 
 export default function LoginOTP(props){
   const inputRef = useRef(null)
   const [OTP, setOTP] = useState('')
+  const {user, setUser} = useContext(UserContext)
 
   useEffect(()=>{
     if(OTP.length === 5){
@@ -20,7 +22,15 @@ export default function LoginOTP(props){
   const login = () => {
     API.submitValidationCode(props.route.params.phoneNumber,OTP).then((res)=>{
       console.log(res)
-      props.navigation.navigate('SetProfile')
+      if(res.isBasicInfoProvided){
+        API.getCurrentUserFromServer().then((res)=>{
+          setUser(res)
+        })
+        props.navigation.navigate('Home')
+      }else{
+        props.navigation.navigate('SetProfile')
+
+      }
     })
   }
 

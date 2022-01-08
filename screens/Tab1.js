@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import Colors from '../utils/Colors';
 import { width, height } from '../utils/Constants'
@@ -7,8 +6,11 @@ import Constants from 'expo-constants';
 import {Ionicons} from '@expo/vector-icons'
 import Campaigns from '../components/Campaigns';
 import IsphoneX from '../utils/IsPhoneX'
+import {UserContext} from '../utils/Context'
+import React, {useContext} from 'react';
 
 export default function Tab1(props){
+  const {user} = useContext(UserContext)
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -20,11 +22,15 @@ export default function Tab1(props){
             Osman Bey
           </Text>
         </View>
-        <TouchableOpacity activeOpacity={0.9} style={styles.loginButton} onPress={()=>props.navigation.navigate('Login')}>
+        <TouchableOpacity activeOpacity={0.9} style={styles.loginButton} onPress={()=>props.navigation.navigate(user ? 'Profile' : 'Login')}>
           <Ionicons name='person-sharp' size={16} color={'white'}/>
-          <Text style={[fontStyles.subhead2, {color: 'white', marginLeft: 4}]}>
-            Giriş
-          </Text>
+          {
+            !user &&
+            <Text style={[fontStyles.subhead2, {color: 'white', marginLeft: 4}]}>
+              Giriş
+            </Text>
+          }
+
         </TouchableOpacity>
       </View>
       <Campaigns navigation={props.navigation}/>

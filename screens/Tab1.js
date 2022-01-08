@@ -12,6 +12,15 @@ import React, {useContext} from 'react';
 export default function Tab1(props){
   const {user} = useContext(UserContext)
   console.log(user)
+
+  const campaignButton = () => {
+    return (
+      <TouchableOpacity activeOpacity={1} style={styles.campaignButton} onPress={()=>props.navigation.navigate('Code')}>
+        <Ionicons size={16} name={'qr-code'} color={'white'}/>
+      </TouchableOpacity>
+    )
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -23,16 +32,25 @@ export default function Tab1(props){
             {user.firstName || "Kazandırio'lu"}
           </Text>
         </View>
-        <TouchableOpacity activeOpacity={0.9} style={styles.loginButton} onPress={()=>props.navigation.navigate(user ? 'Profile' : 'Login')}>
-          <Ionicons name='person-sharp' size={16} color={'white'}/>
+          
+        <View style={{flexDirection: 'row'}}>
+          {campaignButton()}
           {
-            !user &&
+            user ? 
+            <TouchableOpacity activeOpacity={0.9} style={styles.campaignButton} onPress={()=>props.navigation.navigate(user ? 'Profile' : 'Login')}>
+              <Ionicons name='person-sharp' size={16} color={'white'}/>
+            </TouchableOpacity>
+            :
+          <TouchableOpacity activeOpacity={0.9} style={styles.loginButton} onPress={()=>props.navigation.navigate(user ? 'Profile' : 'Login')}>
+            <Ionicons name='person-sharp' size={16} color={'white'}/>
             <Text style={[fontStyles.subhead2, {color: 'white', marginLeft: 4}]}>
               Giriş
             </Text>
+          </TouchableOpacity>
           }
 
-        </TouchableOpacity>
+        </View>
+
       </View>
       <Campaigns navigation={props.navigation}/>
     </View>
@@ -65,5 +83,19 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.6,
     shadowRadius: 1
+  },
+  campaignButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.pepsiDarkBlue.alpha1,
+    marginRight: 12,
+    shadowColor: 'black',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.6,
+    shadowRadius: 1
+    
   }
 })

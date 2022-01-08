@@ -4,15 +4,93 @@ import Colors from '../utils/Colors';
 import { width, height, statusBarHeight } from '../utils/Constants'
 import fontStyles from '../utils/FontStyles';
 import IsphoneX from '../utils/IsPhoneX'
-import {Ionicons, Feather} from '@expo/vector-icons'
+import {Ionicons, Feather, Entypo} from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient';
 
+const authRequest = new AuthRequest({
+  responseType: ResponseType.Token,
+    clientId: 'f68026533f594d8b8aecbfdae130d266',
+    scopes: ['user-read-email', 'user-read-recently-played'],
+    usePKCE: false,
+    redirectUri: 'exp://localhost:19000/--/',
+});
+
+import { ResponseType, AuthRequest } from 'expo-auth-session'; // SPOTIFY: BU LAZIM
+
+// SPOTIFY: BU LAZIM
+const discovery = {
+  authorizationEndpoint: 'https://accounts.spotify.com/authorize',
+  tokenEndpoint: 'https://accounts.spotify.com/api/token',
+};
+
+// SPOTIFY: BU LAZIM GIBI AMA COK DA DEGIL
+async function getRecentTracks(accessToken){
+  let options = {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + accessToken
+    }
+  }
+  let response = await fetch('https://api.spotify.com/v1/me/player/recently-played', options);
+  let body = await response.json();
+
+  return body;
+}
+
+// SPOTIFY: BU LAZIM
+async function getPlaylist(id, accessToken){
+  let options = {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + accessToken
+    }
+  }
+  let response = await fetch('https://api.spotify.com/v1/playlists/' + id, options);
+  let body = await response.json();
+
+  return body;
+}
+
+// SPOTIFY: BU LAZIM
+async function getAllPlaylists(accessToken){
+  let playlistIds = ['4EbiD7z0FikP00YGNP263m', '06VsGC8oZ4sQcGwSYL4g1b', '6dvCzrH94Nq0pWdEtlyzvl'];
+
+  let playlists = [];
+
+  for(let playlistId of playlistIds){
+    let body = await getPlaylist(playlistId, accessToken);
+    playlists.push(body);
+  }
+
+  return playlists;
+}
+
+async function searchTracks(query, accessToken){
+  let fetchUrl = encodeURI('https://api.spotify.com/v1/search?q=' + query + '&type=track&market=TR&limit=10&offset=0');
+
+  let options = {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + accessToken
+    }
+  }
+  let response = await fetch(fetchUrl, options);
+  let body = await response.json();
+
+  console.log(body);
+
+  return body.tracks.items;
+}
 
 export default class Tab2 extends React.PureComponent {
   constructor(props){
     super(props)
 
     this.tabValue = new Animated.Value(0)
+    this.spotifyOpacityValue = new Animated.Value(1)
 
     this.tabLineAnimate = {
       transform: [{
@@ -25,7 +103,11 @@ export default class Tab2 extends React.PureComponent {
 
     this.state = {
       selectedTab: 0,
-      myList: [1,2,3,4,5]
+      myList: [0,1,2,3],
+      trackObjects: [],
+      playlist: [],
+      accessToken: null,
+      showSpotifyView: true
     }
   }
 
@@ -38,6 +120,47 @@ export default class Tab2 extends React.PureComponent {
         friction: 9
       }).start()
     })
+  }
+
+  makeCall = async() => {
+    let response = await authRequest.promptAsync(discovery);
+    if (response?.type === 'success') {
+      this.setState({accessToken: response.params.access_token})
+      console.log(response.params.access_token);
+
+      getAllPlaylists(response.params.access_token)
+      .then(playlists=>{
+        this.setState({playlists: playlists},()=>{
+          this.animateSpotifyView(0)
+        })
+      });
+    }
+  }
+
+  onSearchChange = (text) => {
+    if(text.length < 3){
+      return;
+    }
+    searchTracks(text, this.state.accessToken)
+        .then(tracks=>{
+
+          let trackObjects = [];
+
+          for(let track of tracks){
+            let artistName = track.artists[0].name;
+            let durationSec = Math.round(track.duration_ms / 1000);
+            let songDuration = [Math.floor(durationSec / 60), durationSec % 60];
+            let songName = track.name;
+            let albumImage = track.album.images[0].url;
+
+            trackObjects.push({
+              artistName, songDuration: String(songDuration[0]) + ":" + String(songDuration[1]).padStart(2, '0'),
+              songName, albumImage, id: track.id, url: track.external_urls.spotify,
+            })
+          }
+
+          this.setState({trackObjects: trackObjects});
+        });
   }
 
 
@@ -83,13 +206,27 @@ export default class Tab2 extends React.PureComponent {
     )
   }
 
-  deleteListRow = () => {
-    Alert.alert("Şarkıyı Kaldır", "Bu şarkıyı listenizden kaldırmak istediğinizden emin misiniz?", [{text: "Kaldır", style: "default"}, {text: "Vazgeç", style: "cancel"}])
+  animateSpotifyView = (value) => {
+    Animated.timing(this.spotifyOpacityValue, {
+      toValue: value,
+      duration: 250,
+      useNativeDriver: true
+    }).start(()=>{
+      this.setState({showSpotifyView: false})
+    })
+  }
+
+  modal = () => {
+    return(
+      <Animated.View style={styles.modalContainer}>
+        
+      </Animated.View>
+    )
   }
 
   screen1 = () => {
     return (
-      <View style={styles.screenContainer}>
+      <View style={[styles.screenContainer]}>
         <ScrollView
           style={{flex: 1}}
           contentContainerStyle={{paddingVertical: width * 0.075}}
@@ -168,7 +305,25 @@ export default class Tab2 extends React.PureComponent {
           </View>
           
         </ScrollView>
-        
+        {
+          this.state.showSpotifyView &&
+          <Animated.View style={[styles.spotifyContainer, {opacity: this.spotifyOpacityValue}]}>
+            <Text style={[fontStyles.title1, {color: Colors.pepsiBlack.alpha1, alignSelf: 'center'}]}>
+              {"Dinle Kazan!"}
+            </Text>
+            <Text style={[fontStyles.body, {color: Colors.pepsiGrayText.alpha1, marginTop: width * 0.075, alignSelf: 'center', textAlign: 'center', lineHeight: 25, fontWeight: '400'}]}>
+              {'Spotify hesabına bağlan, listeni oluştur ve şarkı dinleyerek kazanmaya başla.'}
+            </Text>
+            <TouchableOpacity style={styles.spotifyButton} activeOpacity={0.9} onPress={this.makeCall}>
+              <Entypo name='spotify-with-circle' size={22} color='white'/>
+              <Text style={[fontStyles.body, {color: 'white', marginLeft: width * 0.033}]}>
+                {"Spotify'a Bağlan"}
+              </Text>
+            </TouchableOpacity>
+            {/* BURAYA AMKK */}
+          </Animated.View>
+        }
+
       </View>
     )
   }
@@ -306,9 +461,6 @@ const styles = StyleSheet.create({
     width: width * 0.6,
     height: width * 0.5,
   },
-
-
-
   searchContainer: {
     width: width * 0.868,
     borderRadius: 100,
@@ -340,6 +492,36 @@ const styles = StyleSheet.create({
     bottom: -2,
     height: 5, 
     borderRadius: 10, 
-    backgroundColor: Colors.pepsiYellow.alpha1
+    backgroundColor: Colors.pepsiBlue.alpha1
+  },
+  spotifyButton: {
+    width: width * 0.7,
+    height: 54,
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#1DB954',
+    flexDirection: 'row',
+    alignSelf: 'center',
+    shadowColor:  '#1DB954',
+    shadowOpacity: 1,
+    shadowOffset: {width: 1, height: 1},
+    shadowRadius: 10,
+    marginTop: width * 0.15
+  },
+  spotifyContainer: {
+    justifyContent: 'center', 
+    paddingHorizontal: width * 0.1, 
+    position: 'absolute', 
+    backgroundColor: 'white', 
+    height: '100%', 
+    width: width
+  },
+  modalContainer: {
+    width: width,
+    height: height * 0.8,
+    backgroundColor: Colors.white.alpha1,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   }
 })

@@ -42,7 +42,7 @@ export default function App() {
           <Stack.Screen name="LoginOTP" component={LoginOTP}/>
           <Stack.Screen name="SetProfile" component={SetProfile}/>
           <Stack.Screen name="Profile" component={Profile}/>
-
+          <Stack.Screen name="Code" component={Code}/>
         </Stack.Navigator>
       </UserContextProvider>
     </NavigationContainer>
@@ -56,5 +56,6 @@ import PhoneLogin from './screens/PhoneLogin';
 import LoginOTP from './screens/LoginOTP';
 import SetProfile from './screens/SetProfile';
 import Profile from './screens/Profile';
+import Code from './screens/Code';
 
 

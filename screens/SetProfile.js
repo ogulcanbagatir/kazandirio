@@ -76,7 +76,7 @@ export default function SetProfile(props){
   return(
     <View style={styles.container} >
       <View style={{flex: 1}} onTouchStart={()=>setShow(false)}>
-        <KeyboardAvoidingView keyboardVerticalOffset={16} style={{flex: 1, backgroundColor: 'transparent'}}  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <KeyboardAvoidingView keyboardVerticalOffset={0} style={{flex: 1, backgroundColor: 'transparent'}}  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <ScrollView
             style={{flex: 1}}
             contentContainerStyle={{paddingTop: Constants.statusBarHeight + 32, paddingHorizontal: width * 0.066}}
@@ -118,14 +118,16 @@ export default function SetProfile(props){
                 })
               } 
             </View>
+            <TouchableOpacity disabled={disabled()} style={[styles.loginButton, {backgroundColor: !disabled() ? Colors.pepsiDarkBlue.alpha1 : Colors.pepsiGray.alpha1}]} onPress={submit}>
+              <Text style={[fontStyles.body, {color: 'white'}]}>
+                Bilgilerini Onayla
+              </Text>
+            </TouchableOpacity>
           </ScrollView>
+          
         </KeyboardAvoidingView>
       </View>
-      <TouchableOpacity disabled={disabled()} style={[styles.loginButton, {backgroundColor: !disabled() ? Colors.pepsiDarkBlue.alpha1 : Colors.pepsiGray.alpha1}]} onPress={submit}>
-        <Text style={[fontStyles.body, {color: 'white'}]}>
-          Bilgilerini Onayla
-        </Text>
-      </TouchableOpacity>
+      
       
       <BackButton navigation={props.navigation} onPress={()=>props.navigation.navigate('PhoneLogin')}/>
       {show && (
@@ -169,7 +171,6 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
     justifyContent: 'center',
     alignSelf: 'center',
-    position: 'absolute',
-    bottom: 32
+    marginVertical: 32
   }
 })

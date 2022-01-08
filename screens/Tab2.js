@@ -91,6 +91,7 @@ export default class Tab2 extends React.PureComponent {
 
     this.tabValue = new Animated.Value(0)
     this.spotifyOpacityValue = new Animated.Value(1)
+    this.modalValue = new Animated.Value(0)
 
     this.tabLineAnimate = {
       transform: [{
@@ -105,9 +106,9 @@ export default class Tab2 extends React.PureComponent {
       selectedTab: 0,
       myList: [0,1,2,3],
       trackObjects: [],
-      playlist: [],
+      playlists: [],
       accessToken: null,
-      showSpotifyView: true
+      showSpotifyView: true,
     }
   }
 
@@ -131,6 +132,7 @@ export default class Tab2 extends React.PureComponent {
       getAllPlaylists(response.params.access_token)
       .then(playlists=>{
         this.setState({playlists: playlists},()=>{
+          console.log(playlists)
           this.animateSpotifyView(0)
         })
       });
@@ -138,6 +140,9 @@ export default class Tab2 extends React.PureComponent {
   }
 
   onSearchChange = (text) => {
+    if(text.length === 0){
+      this.setState({trackObjects: []})
+    }
     if(text.length < 3){
       return;
     }
@@ -158,11 +163,18 @@ export default class Tab2 extends React.PureComponent {
               songName, albumImage, id: track.id, url: track.external_urls.spotify,
             })
           }
-
+          console.log(trackObjects)
           this.setState({trackObjects: trackObjects});
         });
   }
-
+  
+  openModal = () => {
+    Animated.timing(this.modalValue, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: true
+    }).start()
+  }
 
   header = () => {
     return (
@@ -183,8 +195,8 @@ export default class Tab2 extends React.PureComponent {
           <TextInput
             style={[fontStyles.body, styles.textInput, {fontWeight: "500"}]}
             placeholder='Arayan Bulur'
-            placeholderTextColor={Colors.white.alpha04}
-            onChangeText={text => {}}
+            onChangeText={this.onSearchChange}
+            onFocus={this.openModal}
           />
         </View>
 
@@ -217,14 +229,58 @@ export default class Tab2 extends React.PureComponent {
   }
 
   modal = () => {
+    const modalTransform = {
+      transform: [
+        {
+          translateY: this.modalValue.interpolate({
+            inputRange: [0,1],
+            outputRange: [0, -height * 0.65]
+          })
+        }
+      ]
+    }
     return(
-      <Animated.View style={styles.modalContainer}>
+      <Animated.View style={[styles.modalContainer, modalTransform]}>
+        <ScrollView
+          style={{flex: 1}}
+          contentContainerStyle={{paddingBottom: 10}}
+        >
+          {
+            this.state.trackObjects.map((item)=>{
+              return (
+                <TouchableOpacity style={styles.myListRowContainer}>
+                  <View style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}}>
+                    <Image source={{uri: item.albumImage}} style={{width: 44, height: 44, position: "absolute", top: 0, opacity: 0.55}} resizeMode="cover" />
+                    <Ionicons name={"play"} color={Colors.pepsiYellow.alpha1} size={20}/>
+                  </View>
+
+                  <View style={{marginLeft: width * 0.033, flex: 1}}>
+                    <Text numberOfLines={2} style={[fontStyles.subhead, {color: Colors.pepsiBlack.alpha1, fontWeight: "600", shadowColor: Colors.pepsiDarkBlue.alpha1, shadowOpacity: 0.2, shadowRadius: 3}]}>
+                      {item.songName}
+                    </Text>
+
+                    <Text style={[fontStyles.footnoteLight, {color: Colors.pepsiGray.alpha1, fontWeight: "600", shadowColor: Colors.pepsiDarkBlue.alpha1, shadowOpacity: 0.2, shadowRadius: 3, marginTop: 8}]}>
+                      {item.artistName}
+                    </Text>
+                    
+                  </View>
+
+                  <TouchableOpacity style={[styles.cancelButtonRow, {backgroundColor: Colors.pepsiText.alpha03, borderRadius: 5, marginLeft: 8}]}>
+                    <Feather name="plus" color={Colors.pepsiBlack.alpha1} size={18}/>
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              )
+            })
+          }
+        </ScrollView>
+        
         
       </Animated.View>
     )
   }
 
   screen1 = () => {
+    console.log(this.state.playlists)
     return (
       <View style={[styles.screenContainer]}>
         <ScrollView
@@ -242,11 +298,11 @@ export default class Tab2 extends React.PureComponent {
               contentContainerStyle={{paddingHorizontal: width * 0.066,}}
             >
               {
-                [1,2,3,4,5].map((item, index) => {
+                this.state.playlists.map((item, index) => {
                   return (
                     <TouchableOpacity key={index + "xxx" + index} onPress={() => {}} style={styles.pepsiCardButton} activeOpacity={1}>
                       <View style={styles.pepsiCardInnerContainer}>
-                        <Image source={require("../assets/messi.jpg")} style={styles.pepsiCardImage} resizeMode="cover" />
+                        <Image source={{uri: item.images[0].url}} style={styles.pepsiCardImage} resizeMode="cover" />
                         <LinearGradient colors={[Colors.pepsiDarkBlue.alpha09, Colors.pepsiDarkBlue.alpha01]} style={styles.pepsiCardGradient} start={[0.5, 1]} end={[0.5, 0]} />
                         
                         <View style={{width: 44, height: 44, borderRadius: 12, backgroundColor: Colors.white.alpha03, justifyContent: 'center', alignItems: "center"}}>
@@ -254,7 +310,7 @@ export default class Tab2 extends React.PureComponent {
                         </View>
 
                         <Text style={[fontStyles.body, {fontWeight: "700", lineHeight: 24, color: Colors.pepsiBg.alpha1, }]}>
-                          {"Messi'nin Kupa Kaldırırken Dinlediği Şarkılar"}
+                          {item.name}
                         </Text>
                       </View>
                     </TouchableOpacity>
@@ -377,6 +433,7 @@ export default class Tab2 extends React.PureComponent {
           {this.screen3()}
           {this.screen4()}
         </ScrollView>
+        {this.modal()}
       </View>
     )
   }
@@ -524,9 +581,11 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: width,
-    height: height * 0.8,
+    height: height * 0.65,
     backgroundColor: Colors.white.alpha1,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+    position: 'absolute',
+    bottom: -height * 0.65
   }
 })

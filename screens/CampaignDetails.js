@@ -8,6 +8,7 @@ import API from '../utils/API'
 import {Ionicons} from '@expo/vector-icons'
 import { StatusBar } from 'expo-status-bar';
 import moment from 'moment';
+import { WebView } from 'react-native-webview';
 
 export default function CampaignDetails(props){
   const {id} = props.route.params
@@ -27,6 +28,9 @@ export default function CampaignDetails(props){
     )
   }
 
+  let campaignHtml = `<div style="background-color: rgb(240,240,240); font-size: 52px; margin: -10px; padding-top: 10px;">` + 
+      campaign.descriptionHeader + "<p> <p>" + campaign.descriptionBody + "</div>"
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -44,6 +48,12 @@ export default function CampaignDetails(props){
             {moment(campaign.campaignStartDate).format('DD.MM.YYYY') + ' - ' + moment(campaign.campaignEndDate).format('DD.MM.YYYY')}
             </Text>
           </View>
+          <WebView
+            style={{height: 10000,borderWidth: 0, marginTop: 20}}
+            originWhitelist={['*']}
+            bounces={false}
+            scrollEnabled={false}
+            source={{ html: campaignHtml }} />
         </View>
       </ScrollView>
     </View>
@@ -61,7 +71,5 @@ const styles = StyleSheet.create({
   header: {
     paddingVertical: width * 0.075,
     paddingHorizontal: width * 0.066,
-    borderBottomWidth :0.5,
-    borderColor: Colors.pepsiBlack.alpha05
   }
 })

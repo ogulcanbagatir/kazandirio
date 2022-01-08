@@ -318,6 +318,7 @@ export default class Tab2 extends React.PureComponent {
             :
             this.state.trackObjects.map((item, index)=>{
               const isSelected = this.state.myList.find(song => song.id === item.id)
+              
               return (
                 <MusicRow key={index + 'er'} item={item} index={index} onAddSong={()=>this.onAddSong(item)} isSelected={isSelected}/>
               )

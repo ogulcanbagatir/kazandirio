@@ -7,10 +7,13 @@ import React, {useContext, useState} from 'react';
 import fontStyles from '../utils/FontStyles';
 import API from '../utils/API'
 import {Ionicons} from '@expo/vector-icons'
+import BackButton from '../components/BackButton';
 
 export default function Code(props){
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const {user, setUser} = useContext(UserContext);
 
   const useCode = () => {
     setLoading(true)
@@ -25,6 +28,17 @@ export default function Code(props){
         setLoading(false)
       })
     })
+  }
+
+  if(!user){
+    return (
+      <View style={styles.container}>
+        <Text style={{marginTop: 80, marginHorizontal: 40, color: 'rgb(70, 70, 70)', fontSize: 18, lineHeight: 26, textAlign: 'center'}}>
+          Kod girerek hediye kazanmak için giriş yapmalısınız.
+        </Text>
+        <BackButton navigation={props.navigation}/>
+      </View>
+    )
   }
 
   return (

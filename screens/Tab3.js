@@ -1,11 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
 import { width, height } from '../utils/Constants'
 import API from '../utils/API'
 import Constants from 'expo-constants';
 import Colors from '../utils/Colors';
 import fontStyles from '../utils/FontStyles';
+import {UserContext} from '../utils/Context';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 export default function Tab3(props){
@@ -14,8 +15,12 @@ export default function Tab3(props){
   const transformVal = useSharedValue(0)
   const [refreshing, setRefreshing] = useState(false)
 
+  const {user, setUser} = useContext(UserContext)
+
   useEffect(()=>{
-    onRefresh()
+    if(user){
+      onRefresh()
+    }
   },[])
 
   const onRefresh = () => {
@@ -77,43 +82,63 @@ export default function Tab3(props){
           onRefresh={onRefresh}
         />}
       >
-        
-        <View style={styles.headerContainer}>
-          <Text style={[fontStyles.title3, {color: Colors.pepsiBlack.alpha1, fontWeight: '400'}]}>
-            Pepsi Puan
-          </Text>
-          <Text style={[fontStyles.title1, {color: Colors.pepsiBlack.alpha1, fontWeight: '400', marginTop: width * 0.05}]}>
-            72000
-          </Text>
-          {switcher()}
-        </View>
-        <View style={{paddingHorizontal: width * 0.066, width: '100%'}}>  
-          {
-            gifts.map((item, index)=>{
-              console.log(item)
-              return (
-                <View key={index + "dde"} style={styles.gift}>
-                  <View style={styles.giftHeader}>
-                    <Text style={[fontStyles.footnoteLight, {  marginRight: 20,color: Colors.pepsiDarkBlue.alpha1}]}>
-                      {item.campaignName}
-                    </Text>
-                  </View>
-                  <View style={{flexDirection: 'row', paddingHorizontal: width * 0.033, paddingVertical: width * 0.05, alignItems: 'center',}}>
-                    <Image source={{uri: item.imageUrl}} style={{width: width * 0.25, height: width * 0.25}}/>
-                    <View style={{marginLeft: width * 0.05, flex: 1}}>
-                      <Text style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1, lineHeight: 28, marginRight: 20}]}>
-                        {item.name}
-                      </Text>
-                      <Text style={[fontStyles.subhead2, {color: Colors.pepsiBlack.alpha1, marginTop: width * 0.05}]}>
-                        {item.amount + ' ' + item.benefitType}
-                      </Text>
+        {
+          (!user) ?
+
+          <View style={{marginHorizontal: 40, marginTop: 100}}>
+            <Text style={{color: 'rgb(70,70,70)', fontSize: 18, textAlign: 'center', lineHeight: 26}}>
+              Puanlarınızı ve hediyelerinizi görüntülemek için giriş yapmalısınız.
+            </Text>
+          </View>
+
+          :
+
+          <View>
+
+            <View style={styles.headerContainer}>
+              <Text style={[fontStyles.title3, {color: Colors.pepsiBlack.alpha1, fontWeight: '400'}]}>
+                Pepsi Puan
+              </Text>
+              <Text style={[fontStyles.title1, {color: Colors.pepsiBlack.alpha1, fontWeight: '400', marginTop: width * 0.05}]}>
+                72000
+              </Text>
+              {switcher()}
+            </View>
+            <View style={{paddingHorizontal: width * 0.066, width: '100%'}}>  
+              {
+                gifts.map((item, index)=>{
+                  console.log(item)
+                  return (
+                    <View key={index + "dde"} style={styles.gift}>
+                      <View style={styles.giftHeader}>
+                        <Text style={[fontStyles.footnoteLight, {  marginRight: 20,color: Colors.pepsiDarkBlue.alpha1}]}>
+                          {item.campaignName}
+                        </Text>
+                      </View>
+                      <View style={{flexDirection: 'row', paddingHorizontal: width * 0.033, paddingVertical: width * 0.05, alignItems: 'center',}}>
+                        <Image source={{uri: item.imageUrl}} style={{width: width * 0.25, height: width * 0.25}}/>
+                        <View style={{marginLeft: width * 0.05, flex: 1}}>
+                          <Text style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1, lineHeight: 28, marginRight: 20}]}>
+                            {item.name}
+                          </Text>
+                          <Text style={[fontStyles.subhead2, {color: Colors.pepsiBlack.alpha1, marginTop: width * 0.05}]}>
+                            {item.amount + ' ' + item.benefitType}
+                          </Text>
+                        </View>
+                      </View>
                     </View>
-                  </View>
-                </View>
-              )
-            })
-          }
-        </View>
+                  )
+                })
+              }
+            </View>
+
+
+          </View>
+
+
+        }
+        
+        
         
       </ScrollView>
     </View>

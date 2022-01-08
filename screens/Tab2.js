@@ -1,10 +1,12 @@
 import React from 'react';
-import { Animated, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Animated, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Colors from '../utils/Colors';
 import { width, height, statusBarHeight } from '../utils/Constants'
 import fontStyles from '../utils/FontStyles';
 import IsphoneX from '../utils/IsPhoneX'
 import {Ionicons, Feather} from '@expo/vector-icons'
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 export default class Tab2 extends React.PureComponent {
   constructor(props){
@@ -22,7 +24,8 @@ export default class Tab2 extends React.PureComponent {
     }
 
     this.state = {
-      selectedTab: 0
+      selectedTab: 0,
+      myList: [1,2,3,4,5]
     }
   }
 
@@ -42,7 +45,7 @@ export default class Tab2 extends React.PureComponent {
     return (
       <View style={styles.header}>
         <Text style={[fontStyles.largeTitleLight, {color: Colors.pepsiDarkBlue.alpha1}]}>
-          Kazandirio
+          KazandiRio
         </Text>
         
         <View style={styles.searchContainer}>
@@ -72,15 +75,104 @@ export default class Tab2 extends React.PureComponent {
     )
   }
 
+
   screen1 = () => {
+
+    if(true){
+      return (
+        <View style={[styles.screenContainer, {}]}>
+          <Image blurRadius={15} source={require("../assets/blurbg.png")} style={{position: "absolute", opacity: 0.6, top: 0, height: "100%", width: width, bottom: 0,}} resizeMode='cover'/>
+
+          {/* BURAYA AMKK */}
+
+        </View>
+      )
+    }
     return (
       <View style={styles.screenContainer}>
-        <Text style={[fontStyles.title2, {color: Colors.pepsiBlack.alpha1}]}>
-          Pepsi Listeleri
-        </Text>
+        <ScrollView
+          style={{flex: 1}}
+          contentContainerStyle={{paddingVertical: width * 0.075}}
+        >
+          <Text style={[fontStyles.title2, {marginLeft: width * 0.066, color: Colors.pepsiBlack.alpha1}]}>
+            Sana Özel
+          </Text>
+          <View style={{width: width, alignSelf: "baseline", paddingVertical: width * 0.033, paddingBottom: width * 0.066}}>
+            <ScrollView
+              showsHorizontalScrollIndicator={false}
+              horizontal
+              style={{width: width}}
+              contentContainerStyle={{paddingHorizontal: width * 0.066,}}
+            >
+              {
+                [1,2,3,4,5].map((item, index) => {
+                  return (
+                    <TouchableOpacity key={index + "xxx"} onPress={() => {}} style={styles.pepsiCardButton} activeOpacity={1}>
+                      <View style={styles.pepsiCardInnerContainer}>
+                        <Image source={require("../assets/messi.jpg")} style={styles.pepsiCardImage} resizeMode="cover" />
+                        <LinearGradient colors={[Colors.pepsiDarkBlue.alpha09, Colors.pepsiDarkBlue.alpha01]} style={styles.pepsiCardGradient} start={[0.5, 1]} end={[0.5, 0]} />
+                        
+                        <View style={{width: 44, height: 44, borderRadius: 12, backgroundColor: Colors.white.alpha03, justifyContent: 'center', alignItems: "center"}}>
+                          <Ionicons name={"play"} color={Colors.pepsiYellow.alpha1} size={20}/>
+                        </View>
+
+                        <Text style={[fontStyles.body, {fontWeight: "700", lineHeight: 24, color: Colors.pepsiBg.alpha1, }]}>
+                          {"Messi'nin Kupa Kaldırırken Dinlediği Şarkılar"}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )
+                })
+              }
+            </ScrollView>
+          </View>
+
+          <Text style={[fontStyles.title2, {marginLeft: width * 0.066, color: Colors.pepsiBlack.alpha1}]}>
+            Benim Listem
+          </Text>
+          
+          <View style={{width: width}}>
+            {
+              this.state.myList.map((item, index) => {
+                return (
+                  <TouchableOpacity style={styles.myListRowContainer}>
+                    <View style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}}>
+                      <Image source={require("../assets/messi.jpg")} style={{width: 44, height: 44, position: "absolute", top: 0, opacity: 0.55}} resizeMode="cover" />
+                      <Ionicons name={"play"} color={Colors.pepsiYellow.alpha1} size={20}/>
+                    </View>
+
+                    <View style={{marginLeft: width * 0.033, flex: 1}}>
+                      <Text style={[fontStyles.subhead, {color: Colors.pepsiBlack.alpha1, fontWeight: "600", shadowColor: Colors.pepsiDarkBlue.alpha1, shadowOpacity: 0.2, shadowRadius: 3}]}>
+                        Shakira - Yalan Dünya
+                      </Text>
+                      
+                      <View style={{marginTop: width * 0.033, flexDirection: "row", alignItems: "center"}}>
+                        <View style={{overflow: "hidden", width: width * 0.4, height: 4, backgroundColor: Colors.pepsiBg.alpha1, borderRadius: 10}}>
+                          <View style={{height: 4, width: width * 0.22, backgroundColor: Colors.pepsi.alpha1}}/>
+                        </View>
+
+                        <Text style={[fontStyles.footnoteBold, {fontWeight: "400", marginLeft: 6, marginBottom: 1}]} >
+                          %23
+                        </Text>
+                      </View>
+                    </View>
+
+                    <TouchableOpacity style={styles.cancelButtonRow}>
+                      <Feather name="x" color={Colors.pepsiBlack.alpha1} size={18}/>
+                    </TouchableOpacity>
+                  </TouchableOpacity>
+                )
+              })
+            }
+
+          </View>
+          
+        </ScrollView>
+        
       </View>
     )
   }
+
 
   screen2 = () => {
     return (
@@ -148,6 +240,19 @@ const styles = StyleSheet.create({
   },
 
 
+  myListRowContainer: {
+    width: width * 0.868,
+    alignSelf: "center",
+    flexDirection: "row",
+    paddingVertical: width * 0.025,
+    alignItems: "center",
+    // backgroundColor: Colors.pepsiBg.alpha1,
+    marginBottom: width * 0.033,
+  },
+
+  cancelButtonRow: {
+    padding: 7,
+  },  
 
   innerContainer: {
     width: width,
@@ -155,14 +260,45 @@ const styles = StyleSheet.create({
   },
   screenContainer: {
     width: width,
-    flex: 1,  
-    paddingHorizontal: width * 0.066,
+    flex: 1,
+  },
+
+  pepsiCardButton: {
+    marginRight: width * 0.033,
+  },
+  pepsiCardImage: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    borderRadius: 18,
+    width: (width * 0.6) - 8,
+    height: (width * 0.5) - 8,
+    opacity: 0.75
+  },
+  pepsiCardInnerContainer: {
+    overflow: "hidden",
+    borderWidth: 4,
+    borderColor: Colors.white.alpha01,
+    width: width * 0.6,
+    height: width * 0.5,
+    justifyContent: 'flex-end',
+    backgroundColor: Colors.pepsiDarkBlue.alpha1,
+    borderRadius: 20,
+    paddingHorizontal: width * 0.05,
+    paddingVertical: width * 0.04
+  },
+  pepsiCardGradient: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: width * 0.6,
+    height: width * 0.5,
   },
 
 
 
   searchContainer: {
-    width: width * 0.834,
+    width: width * 0.868,
     borderRadius: 100,
     flexDirection: "row",
     alignItems: "center",

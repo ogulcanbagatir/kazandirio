@@ -7,6 +7,7 @@ import IsphoneX from '../utils/IsPhoneX'
 import {Ionicons, Feather, Entypo} from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient';
 import API from '../utils/API'
+import * as Linking from 'expo-linking';
 
 const authRequest = new AuthRequest({
   responseType: ResponseType.Token,
@@ -140,7 +141,6 @@ export default class Tab2 extends React.PureComponent {
       getAllPlaylists(response.params.access_token)
       .then(playlists=>{
         this.setState({playlists: playlists},()=>{
-          console.log(playlists)
           this.animateSpotifyView(0)
         })
       });
@@ -308,8 +308,9 @@ export default class Tab2 extends React.PureComponent {
             </Text>
             :
             this.state.trackObjects.map((item, index)=>{
+              console.log(item);
               return (
-                <TouchableOpacity key={index + 'er'} style={styles.myListRowContainer}>
+                <TouchableOpacity key={index + 'er'} style={styles.myListRowContainer} onPress={()=>{Linking.openURL(item.url)}}>
                   <View style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}}>
                     <Image source={{uri: item.albumImage}} style={{width: 44, height: 44, position: "absolute", top: 0, opacity: 0.55}} resizeMode="cover" />
                     <Ionicons name={"play"} color={Colors.pepsiYellow.alpha1} size={20}/>
@@ -386,7 +387,7 @@ export default class Tab2 extends React.PureComponent {
               {
                 this.state.playlists.map((item, index) => {
                   return (
-                    <TouchableOpacity key={index + "xxx" + index} onPress={() => {}} style={styles.pepsiCardButton} activeOpacity={1}>
+                    <TouchableOpacity key={index + "xxx" + index} onPress={() => {Linking.openURL(item.external_urls.spotify)}} style={styles.pepsiCardButton} activeOpacity={1}>
                       <View style={styles.pepsiCardInnerContainer}>
                         <Image source={{uri: item.images[0].url}} style={styles.pepsiCardImage} resizeMode="cover" />
                         <LinearGradient colors={[Colors.pepsiDarkBlue.alpha09, Colors.pepsiDarkBlue.alpha01]} style={styles.pepsiCardGradient} start={[0.5, 1]} end={[0.5, 0]} />
@@ -396,7 +397,7 @@ export default class Tab2 extends React.PureComponent {
                         </View>
 
                         <Text style={[fontStyles.body, {fontWeight: "700", lineHeight: 24, color: Colors.pepsiBg.alpha1, }]}>
-                          {item.name}
+                          {item.name.split(' | ')[1]}
                         </Text>
                       </View>
                     </TouchableOpacity>
@@ -419,7 +420,7 @@ export default class Tab2 extends React.PureComponent {
               :
               this.state.myList.map((item, index) => {
                 return (
-                  <TouchableOpacity key={index + "ddd"} style={styles.myListRowContainer}>
+                  <TouchableOpacity key={index + "ddd"} style={styles.myListRowContainer} onPress={()=>{Linking.openURL(item.url)}}>
                     <View style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}}>
                       <Image source={{uri: item.albumImage}} style={{width: 44, height: 44, position: "absolute", top: 0, opacity: 0.55}} resizeMode="cover" />
                       <Ionicons name={"play"} color={Colors.pepsiYellow.alpha1} size={20}/>

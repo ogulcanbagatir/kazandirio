@@ -29,7 +29,7 @@ export default function Tab1(props){
             Merhaba,
           </Text>
           <Text style={[fontStyles.body, {color: Colors.secondaryDark.alpha1, marginTop: 2, fontSize: 20}]}>
-            {user.firstName || "Kazandırio'lu"}
+            {user?.firstName || "Kazandırio'lu"}
           </Text>
         </View>
           

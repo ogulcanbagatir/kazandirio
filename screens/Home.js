@@ -56,7 +56,7 @@ export default class Home extends React.PureComponent{
               <Ionicons size={30} name={this.state.selectedTab == 1 ? "headset" : "headset-outline"} color={'white'}/>
             </View>
             <Text style={[FontStyles.footnoteBold, {color: this.state.selectedTab === 1 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha06, marginTop: width * 0.075}]}>
-              KazandiRio
+              Dinle Kazan
             </Text>
           </TouchableOpacity>
 

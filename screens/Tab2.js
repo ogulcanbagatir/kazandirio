@@ -1,11 +1,12 @@
 import React from 'react';
-import { Alert, Animated, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, Image, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, LayoutAnimation } from 'react-native';
 import Colors from '../utils/Colors';
 import { width, height, statusBarHeight } from '../utils/Constants'
 import fontStyles from '../utils/FontStyles';
 import IsphoneX from '../utils/IsPhoneX'
 import {Ionicons, Feather, Entypo} from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient';
+import API from '../utils/API'
 
 const authRequest = new AuthRequest({
   responseType: ResponseType.Token,
@@ -104,12 +105,19 @@ export default class Tab2 extends React.PureComponent {
 
     this.state = {
       selectedTab: 0,
-      myList: [0,1,2,3],
+      myList: [],
       trackObjects: [],
       playlists: [],
       accessToken: null,
       showSpotifyView: true,
+      headerPosY: 0
     }
+  }
+
+  componentDidMount(){
+    API.getMySongs().then((songs)=>{
+      this.setState({myList: songs})
+    })
   }
 
   onPressHeader = (index) => {
@@ -168,18 +176,26 @@ export default class Tab2 extends React.PureComponent {
         });
   }
   
-  openModal = () => {
-    Animated.timing(this.modalValue, {
-      toValue: 1,
-      duration: 250,
-      useNativeDriver: true
-    }).start()
+  transformModal = (value) => {
+    if(!this.state.accessToken){
+      Keyboard.dismiss()
+      Alert.alert('Giriş Yap','Arama yapabilmek için Spotify hesabınıza bağlanmalısınız.', [
+        {
+          text: 'Tamam'
+        }
+      ])
+    }else{
+      Animated.timing(this.modalValue, {
+        toValue: value,
+        duration: 250,
+        useNativeDriver: true
+      }).start()
+    }
   }
 
   header = () => {
     return (
       <View style={styles.header}>
-
         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: width * 0.868}}>
           <Image source={require("../assets/kazandirioLogo.png")} style={{width: width * 0.35, opacity: 0.85, alignItems: "center", height: width * 0.35 * 0.271062271,}} resizeMode='contain' />
           <TouchableOpacity activeOpacity={0.9} style={styles.loginButton} onPress={()=>props.navigation.navigate(user ? 'Profile' : 'Login')}>
@@ -196,11 +212,24 @@ export default class Tab2 extends React.PureComponent {
             style={[fontStyles.body, styles.textInput, {fontWeight: "500"}]}
             placeholder='Arayan Bulur'
             onChangeText={this.onSearchChange}
-            onFocus={this.openModal}
+            onFocus={()=>this.transformModal(1)}
+            autoCapitalize='none'
+            autoComplete='off'
+            autoCorrect={false}
+            
           />
+          <TouchableOpacity style={styles.closeSearchButton} activeOpacity={0.9} onPress={()=>this.transformModal(0)}>
+            <Feather name='x' size={20} color={'white'}/>
+          </TouchableOpacity>
+
         </View>
 
-        <View style={styles.headerOptions}>
+        <View style={styles.headerOptions} onLayout={(event)=> {
+          if(this.state.headerPosY === 0){
+            console.log(event.nativeEvent.layout)
+            this.setState({headerPosY: event.nativeEvent.layout.y + (IsphoneX ? 84 : 64)})
+          }
+        }}>
           {
             ["Müzik", "Podcast", "Game", "YouTube"].map((item, index) => {
               return ( 
@@ -228,27 +257,58 @@ export default class Tab2 extends React.PureComponent {
     })
   }
 
+  onAddSong = (song) => {
+    if( this.state.myList.find(item => song.id === item.id)){
+      return
+    }
+    API.addSongtoMySongs(song).then(()=>{
+      let arr = [...this.state.myList]
+      arr.push(song)
+      this.setState({myList: arr})
+    }).catch((e)=>{
+      console.log(e)
+      Alert.alert('Hata!', 'Birşeyler ters gitti. Lütfen tekrar deneyiniz.', [
+        {
+          text: 'Tekrar Dene',
+          onPress: ()=> this.onAddSong(song)
+        },
+        {
+          text: 'Kapat'
+        }
+      ])
+    })
+  }
+
   modal = () => {
+    const modalHeight = height - this.state.headerPosY
     const modalTransform = {
       transform: [
         {
           translateY: this.modalValue.interpolate({
             inputRange: [0,1],
-            outputRange: [0, -height * 0.65]
+            outputRange: [0, -modalHeight]
           })
         }
       ]
     }
     return(
-      <Animated.View style={[styles.modalContainer, modalTransform]}>
+      <Animated.View style={[styles.modalContainer, modalTransform, {height: modalHeight, bottom: -modalHeight}]}>
+        <Text style={[fontStyles.title3, {color: Colors.pepsiDarkBlue.alpha1, marginLeft: width * 0.066, marginTop: width * 0.066, marginBottom: 8}]}>
+          {'Müzik Ara'}
+        </Text>
         <ScrollView
           style={{flex: 1}}
-          contentContainerStyle={{paddingBottom: 10}}
+          contentContainerStyle={{paddingBottom: 10, paddingTop: 16}}
         >
           {
-            this.state.trackObjects.map((item)=>{
+            this.state.trackObjects.length === 0 ?
+            <Text style={[fontStyles.footnoteBold, {color: Colors.pepsiGray.alpha05, marginHorizontal: width * 0.066}]}>
+              {'En az 3 karakterden oluşan bir arama yapın.'}
+            </Text>
+            :
+            this.state.trackObjects.map((item, index)=>{
               return (
-                <TouchableOpacity style={styles.myListRowContainer}>
+                <TouchableOpacity key={index + 'er'} style={styles.myListRowContainer}>
                   <View style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}}>
                     <Image source={{uri: item.albumImage}} style={{width: 44, height: 44, position: "absolute", top: 0, opacity: 0.55}} resizeMode="cover" />
                     <Ionicons name={"play"} color={Colors.pepsiYellow.alpha1} size={20}/>
@@ -256,16 +316,16 @@ export default class Tab2 extends React.PureComponent {
 
                   <View style={{marginLeft: width * 0.033, flex: 1}}>
                     <Text numberOfLines={2} style={[fontStyles.subhead, {color: Colors.pepsiBlack.alpha1, fontWeight: "600", shadowColor: Colors.pepsiDarkBlue.alpha1, shadowOpacity: 0.2, shadowRadius: 3}]}>
-                      {item.songName}
+                      {item.songName }
                     </Text>
 
                     <Text style={[fontStyles.footnoteLight, {color: Colors.pepsiGray.alpha1, fontWeight: "600", shadowColor: Colors.pepsiDarkBlue.alpha1, shadowOpacity: 0.2, shadowRadius: 3, marginTop: 8}]}>
-                      {item.artistName}
+                      {item.artistName + ' • ' + item.songDuration}
                     </Text>
                     
                   </View>
 
-                  <TouchableOpacity style={[styles.cancelButtonRow, {backgroundColor: Colors.pepsiText.alpha03, borderRadius: 5, marginLeft: 8}]}>
+                  <TouchableOpacity style={[styles.cancelButtonRow, {backgroundColor: Colors.pepsiText.alpha03, borderRadius: 5, marginLeft: 8}]} onPress={()=>this.onAddSong(item)}>
                     <Feather name="plus" color={Colors.pepsiBlack.alpha1} size={18}/>
                   </TouchableOpacity>
                 </TouchableOpacity>
@@ -273,14 +333,39 @@ export default class Tab2 extends React.PureComponent {
             })
           }
         </ScrollView>
-        
-        
       </Animated.View>
     )
   }
 
+  deleteListRow = (id, index) => {
+    API.deleteSongFromMySongs(id).then(()=>{
+      let arr = [...this.state.myList]
+      arr.splice(index, 1)
+
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(
+          500,
+          LayoutAnimation.Types.linear,
+          LayoutAnimation.Properties.opacity
+        )
+      );
+      
+      this.setState({myList: arr})
+
+    }).catch(()=> {
+      Alert.alert('Hata!', 'Birşeyler ters gitti. Lütfen tekrar deneyiniz.', [
+        {
+          text: 'Tekrar Dene',
+          onPress: ()=> this.onAddSong(song)
+        },
+        {
+          text: 'Kapat'
+        }
+      ])
+    })   
+  }
+
   screen1 = () => {
-    console.log(this.state.playlists)
     return (
       <View style={[styles.screenContainer]}>
         <ScrollView
@@ -326,20 +411,27 @@ export default class Tab2 extends React.PureComponent {
           
           <View style={{width: width}}>
             {
+              this.state.myList.length == 0 ? 
+              <Text style={[fontStyles.footnoteBold, {color: Colors.pepsiGray.alpha05, marginHorizontal: width * 0.066, lineHeight: 20, marginTop: width * 0.02}]}>
+                Listenize şarkılar ekleyerek kazanmaya başlayın.
+              </Text>
+              :
               this.state.myList.map((item, index) => {
                 return (
                   <TouchableOpacity key={index + "ddd"} style={styles.myListRowContainer}>
                     <View style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}}>
-                      <Image source={require("../assets/messi.jpg")} style={{width: 44, height: 44, position: "absolute", top: 0, opacity: 0.55}} resizeMode="cover" />
+                      <Image source={{uri: item.albumImage}} style={{width: 44, height: 44, position: "absolute", top: 0, opacity: 0.55}} resizeMode="cover" />
                       <Ionicons name={"play"} color={Colors.pepsiYellow.alpha1} size={20}/>
                     </View>
 
                     <View style={{marginLeft: width * 0.033, flex: 1}}>
                       <Text style={[fontStyles.subhead, {color: Colors.pepsiBlack.alpha1, fontWeight: "600", shadowColor: Colors.pepsiDarkBlue.alpha1, shadowOpacity: 0.2, shadowRadius: 3}]}>
-                        Shakira - Yalan Dünya
+                        {item.songName}
                       </Text>
-                      
-                      <View style={{marginTop: width * 0.033, flexDirection: "row", alignItems: "center"}}>
+                      <Text style={[fontStyles.footnoteBold, {marginTop: width * 0.02, color: Colors.pepsiGray.alpha1, fontWeight: "600", shadowColor: Colors.pepsiDarkBlue.alpha1, shadowOpacity: 0.2, shadowRadius: 3}]}>
+                        {item.artistName + ' • ' + item.songDuration}
+                      </Text>
+                      {/* <View style={{marginTop: width * 0.033, flexDirection: "row", alignItems: "center"}}>
                         <View style={{overflow: "hidden", width: width * 0.4, height: 4, backgroundColor: Colors.pepsiBg.alpha1, borderRadius: 10}}>
                           <View style={{height: 4, width: width * 0.22, backgroundColor: Colors.pepsi.alpha1}}/>
                         </View>
@@ -347,10 +439,10 @@ export default class Tab2 extends React.PureComponent {
                         <Text style={[fontStyles.footnoteBold, {fontWeight: "400", marginLeft: 6, marginBottom: 1}]} >
                           %23
                         </Text>
-                      </View>
+                      </View> */}
                     </View>
 
-                    <TouchableOpacity activeOpacity={1.0} onPress={() => this.deleteListRow() } style={styles.cancelButtonRow}>
+                    <TouchableOpacity activeOpacity={1.0} onPress={() => this.deleteListRow(item.id, index) } style={styles.cancelButtonRow}>
                       <Feather name="x" color={Colors.pepsiBlack.alpha1} size={18}/>
                     </TouchableOpacity>
                   </TouchableOpacity>
@@ -387,7 +479,6 @@ export default class Tab2 extends React.PureComponent {
       </View>
     )
   }
-
 
   screen2 = () => {
     return (
@@ -581,11 +672,14 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: width,
-    height: height * 0.65,
     backgroundColor: Colors.white.alpha1,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     position: 'absolute',
-    bottom: -height * 0.65
+  },
+  closeSearchButton: {
+    height: 46,
+    paddingLeft: 6,
+    justifyContent: 'center'
   }
 })

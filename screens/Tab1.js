@@ -11,6 +11,7 @@ import React, {useContext} from 'react';
 
 export default function Tab1(props){
   const {user} = useContext(UserContext)
+  console.log(user)
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -19,7 +20,7 @@ export default function Tab1(props){
             Merhaba,
           </Text>
           <Text style={[fontStyles.body, {color: Colors.secondaryDark.alpha1, marginTop: 2, fontSize: 20}]}>
-            Osman Bey
+            {user.firstName || "Kazandırio'lu"}
           </Text>
         </View>
         <TouchableOpacity activeOpacity={0.9} style={styles.loginButton} onPress={()=>props.navigation.navigate(user ? 'Profile' : 'Login')}>

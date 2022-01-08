@@ -4,10 +4,13 @@ import { width, height } from '../utils/Constants'
 import {Ionicons} from '@expo/vector-icons'
 import Colors from '../utils/Colors'
 import FontStyles from '../utils/FontStyles'
+import IsphoneX from '../utils/IsPhoneX'
+
+console.log('width: ' + width)
+console.log('height: ' + height)
 
 import Tab1 from './Tab1';
 import Tab2 from './Tab2';
-import Tab3 from './Tab3';
 
 export default class Home extends React.PureComponent{
   constructor(props){
@@ -32,26 +35,27 @@ export default class Home extends React.PureComponent{
           scrollEnabled={false}
           ref={ref => this.scrollRef = ref}
         >
-          <Tab1/>
+          <Tab1 navigation={this.props.navigation}/>
           <Tab2/>
-          <Tab3/>
         </ScrollView>
         <View style={styles.tabContainer}>
           <TouchableOpacity activeOpacity={1} style={[styles.tabButton]} onPress={()=>this.onTabPressed(0)}>
-            <Ionicons size={24} name='home' color={this.state.selectedTab === 0 ? Colors.blueDark.alpha1 : Colors.secondaryDark.alpha1}/>
-            <Text style={[FontStyles.footnoteBold, {color: this.state.selectedTab === 0 ? Colors.blueDark.alpha1 : Colors.secondaryDark.alpha1, marginTop: 5}]}>
+            <Ionicons size={24} name='home' color={this.state.selectedTab === 0 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha1}/>
+            <Text style={[FontStyles.footnoteBold, {color: this.state.selectedTab === 0 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha1, marginTop: 5}]}>
               Kampanyalar
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity activeOpacity={1} style={styles.tabButton} onPress={()=>this.onTabPressed(1)}>
-            <Ionicons size={24} name='qr-code' color={this.state.selectedTab === 1 ? Colors.blueDark.alpha1 : Colors.secondaryDark.alpha1}/>
-            <Text style={[FontStyles.footnoteBold, {color: this.state.selectedTab === 1 ? Colors.blueDark.alpha1 : Colors.secondaryDark.alpha1, marginTop: 5}]}>
+          <TouchableOpacity activeOpacity={1} style={styles.tabButton} onPress={()=>console.log('aaaa')}>
+            <View style={styles.iconContainer}>
+              <Ionicons size={24} name='qr-code' color={'white'}/>
+            </View>
+            <Text style={[FontStyles.footnoteBold, {color: Colors.secondaryDark.alpha1, marginTop: width * 0.075}]}>
               Okut Kazan
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity activeOpacity={1} style={styles.tabButton} onPress={()=>this.onTabPressed(2)}>
-            <Ionicons size={24} name='wallet' color={this.state.selectedTab === 2 ? Colors.blueDark.alpha1 : Colors.secondaryDark.alpha1}/>
-            <Text style={[FontStyles.footnoteBold, {color: this.state.selectedTab === 2 ? Colors.blueDark.alpha1 : Colors.secondaryDark.alpha1, marginTop: 5}]}>
+          <TouchableOpacity activeOpacity={1} style={styles.tabButton} onPress={()=>this.onTabPressed(1)}>
+            <Ionicons size={24} name='wallet' color={this.state.selectedTab === 1 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha1}/>
+            <Text style={[FontStyles.footnoteBold, {color: this.state.selectedTab === 1 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha1, marginTop: 5}]}>
               Cüzdanım
             </Text>
           </TouchableOpacity>
@@ -66,17 +70,35 @@ export default class Home extends React.PureComponent{
 const styles = StyleSheet.create({
   container :{
     flex: 1,
+    backgroundColor: Colors.pepsiBg.alpha1
   },
   tabContainer: {
     width: '100%',
-    height: 64,
+    height: IsphoneX ? 64 + 20 : 64,
     backgroundColor: 'white',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    borderTopWidth: 0.5,
+    borderColor: Colors.secondaryDark.alpha05,
+    paddingBottom: IsphoneX ? 16 : 0
   },
   tabButton: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%'
+  },
+  iconContainer: {
+    width: width * 0.16,
+    height: width * 0.16,
+    borderRadius: width * 0.15,
+    backgroundColor: Colors.pepsiDarkBlue.alpha1,
+    position: 'absolute',
+    top: -width * 0.08,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: Colors.pepsiDarkBlue.alpha1,
+    shadowOffset: {width: 1 , height: 2},
+    shadowRadius: 2,
+    shadowOpacity: 0.5
   }
 })

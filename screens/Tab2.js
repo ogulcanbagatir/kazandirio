@@ -1,7 +1,8 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { width, height } from '../utils/Constants'
+import IsphoneX from '../utils/IsPhoneX'
+
 
 export default function Tab2(props){
   return (
@@ -15,6 +16,6 @@ const styles = StyleSheet.create({
   container :{
     backgroundColor: 'green',
     width: width,
-    height: height - 54
+    height: height - (IsphoneX ? 64 + 20 : 64)
   }
 })

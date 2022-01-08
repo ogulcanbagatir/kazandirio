@@ -28,7 +28,7 @@ export default function Login(props){
       {
         buttons.map((item,index)=>{
           return (
-            <View style={[styles.loginButton, {backgroundColor: item.color}]}>
+            <View key={'loginButton' + index} style={[styles.loginButton, {backgroundColor: item.color}]}>
               <AntDesign name={item.icon} color={'white'} size={20}/>
               <Text style={[fontStyles.body, {color: 'white', marginLeft: width * 0.033}]}>
                 {item.text}

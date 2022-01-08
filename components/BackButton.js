@@ -2,15 +2,19 @@ import React from 'react';
 import { StyleSheet, View , Text, Image, TouchableOpacity } from 'react-native';
 import Colors from '../utils/Colors';
 import { width, height } from '../utils/Constants'
-import fontStyles from '../utils/FontStyles';
-import moment from 'moment';
-import Animated, { Extrapolate, interpolate, useAnimatedStyle } from 'react-native-reanimated';
 import Constants  from 'expo-constants';
 import {Feather} from '@expo/vector-icons'
 
 export default function BackButton(props){
+  const onPress = () => {
+    if(props.onPress){
+      props.onPress()
+    }else{
+      props.navigation.goBack()
+    }
+  }
   return (
-    <TouchableOpacity style={[styles.container, props.style]} activeOpacity={0.9} onPress={()=>props.navigation.goBack()}>
+    <TouchableOpacity style={[styles.container, props.style]} activeOpacity={0.9} onPress={onPress }>
       <Feather name='x' size={20} color='white'/>
     </TouchableOpacity>
   )

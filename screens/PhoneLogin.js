@@ -1,26 +1,32 @@
 import React, { useState } from 'react';
-import { StyleSheet, View , Text, Image, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, View , Text, TouchableOpacity, TextInput } from 'react-native';
 import Colors from '../utils/Colors';
-import { width, height } from '../utils/Constants'
+import { width } from '../utils/Constants'
 import fontStyles from '../utils/FontStyles';
-import moment from 'moment';
-import Animated, { Extrapolate, interpolate, useAnimatedStyle } from 'react-native-reanimated';
 import Constants  from 'expo-constants';
-import {AntDesign} from '@expo/vector-icons'
 import BackButton from '../components/BackButton';
-
-const arr = new Array(9)
+import API from '../utils/API'
 
 export default function PhoneLogin(props){
   const [phoneNumber, setPhoneNumber] = useState('')
   const [policy, setPolicy] = useState(false)
+
+  const login = () => {
+    let num = '5' + phoneNumber
+    console.log(num)
+    API.submitPhoneNumber(num).then((res)=>{
+      if(res.isValid){
+        props.navigation.navigate('LoginOTP', {phoneNumber: num})
+      }
+    })
+  }
 
   return (
     <View style={styles.container}>
       <Text style={[fontStyles.title2, {color: Colors.pepsiBlack.alpha08, alignSelf: 'center'}]}>
         {'Giriş Yap'}
       </Text>
-      <Text style={[fontStyles.body, {color: Colors.pepsiBlack.alpha08, marginTop: width * 0.075, textAlign: 'center', lineHeight: 28}]}>
+      <Text style={[fontStyles.body, {color: Colors.pepsiBlack.alpha08, marginTop: width * 0.075, textAlign: 'center', lineHeight: 28,}]}>
         {'KazandıRio fırsatlarından yararlanmak için giriş yap'}
       </Text>
       <Text style={[fontStyles.body, {color: Colors.pepsiBlack.alpha08, marginTop: width * 0.1}]}>
@@ -43,7 +49,7 @@ export default function PhoneLogin(props){
             Uygulama Kullanım Koşulları'nı ve KVKK Kapsamında Aydınlatma Metni'ni okudum, anlıyorum.
           </Text>
         </View>
-        <TouchableOpacity style={styles.loginButton} activeOpacity={0.9}>
+        <TouchableOpacity style={[styles.loginButton, {backgroundColor: !policy || phoneNumber.length !== 9 ? Colors.pepsiGray.alpha1 : Colors.pepsiDarkBlue.alpha1}]} activeOpacity={0.9} onPress={login} disabled={!policy || phoneNumber.length !== 9}>
           <Text style={[fontStyles.body, {color: 'white'}]}>
             Giriş Yap
           </Text>
@@ -80,7 +86,6 @@ const styles = StyleSheet.create({
   loginButton: {
     height: 44,
     width: '100%',
-    backgroundColor: Colors.pepsiGray.alpha1,
     borderRadius: 100,
     alignItems: 'center',
     alignSelf: 'center',

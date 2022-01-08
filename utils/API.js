@@ -70,13 +70,7 @@ const API = {
 					if (response.status < 400) {
                         return response.json()
                             .then((body) => {
-                                return Promise.all([this.setCurrentSessionId(body.body.token), this._storage.setItem(STORAGE_REFRESH_PATH, body.body.refreshToken)]) 
-                                    .then(() => {
-                                        return Promise.resolve(body.body);
-                                    })
-                                    .catch(() => {
-                                        return Promise.resolve(body.body);
-                                    });
+                                return Promise.resolve(body.body);
                             })
                             .catch(() => {
                                 return this.throwServerError();
@@ -176,7 +170,7 @@ const API = {
 
 		return this.makeHttpRequest('/auth/login/validate', 'POST', params)
             .then(body => {
-                return this.getCurrentUserFromServer()
+				return Promise.all([this.setCurrentSessionId(body.token), this.getCurrentUserFromServer()]) 
                     .then(() => {
                         return Promise.resolve(body);
                     });
@@ -192,20 +186,17 @@ const API = {
 	getCurrentUserFromServer: function() {
 			return this.makeHttpRequest('/auth/profile', 'GET')
 					.then((body)=>{
-							return this.setCurrentUser(body.body);
+							return this.setCurrentUser(body);
 					})
 	},
 	getCampaings: function(){
-		return this.makeHttpRequest('/campaigns', 'GET')
-			.then((body) => {
-				return Promise.resolve(body);
-			});
+		return this.makeHttpRequest('/campaigns', 'GET');
 	},
 	getCampaignDetails: function(id){
-		return this.makeHttpRequest(`/campaigns/${id}`, 'GET')
-			.then((body) => {
-				return Promise.resolve(body);
-			});
+		return this.makeHttpRequest(`/campaigns/${id}`, 'GET');
+	},
+	setProfile: function(profile){
+		return this.makeHttpRequest(`/auth/profile`, 'PUT', profile);
 	}
 };
 

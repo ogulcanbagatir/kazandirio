@@ -4,6 +4,7 @@ const BASE_PATH = "http://hackathon.kazandirio.io/v1"
 const STORAGE_SESSION_PATH = 'kazandirio/currentSessionId';
 const STORAGE_REFRESH_PATH = 'kazandirio/currentRefreshTokenId';
 const STORAGE_USER_PATH = 'kazandirio/currentUser';
+const STORAGE_MY_SONGS_PATH = 'kazandirio/mySongs'
 
 const API = {
 	_storage: {
@@ -206,7 +207,47 @@ const API = {
 	},
 	generateCode: function(){
 		return this.makeHttpRequest(`/code/generate`, 'GET');
-	}
+	},
+
+	addSongtoMySongs: async function(song){
+		let mySongs = await this._storage.getItem(STORAGE_MY_SONGS_PATH);
+	
+		let newMySongs = [];
+	
+		if(mySongs == null){
+			newMySongs.push(song);
+		} else {
+			mySongs = JSON.parse(mySongs);
+			newMySongs = [...mySongs, song];
+		}
+	
+		await this._storage.setItem(STORAGE_MY_SONGS_PATH, JSON.stringify(newMySongs));
+		return;
+	},
+	
+	getMySongs: async function(){
+		let mySongs = await this._storage.getItem(STORAGE_MY_SONGS_PATH);
+	
+		if(mySongs == null){
+		 return [];
+		} else {
+		 mySongs = JSON.parse(mySongs);
+		 return mySongs;
+		}
+	},
+	
+	deleteSongFromMySongs: async function(songId){
+		let mySongs = await this._storage.getItem(STORAGE_MY_SONGS_PATH);
+
+		if(mySongs == null){
+			return ;
+		} else {
+			mySongs = JSON.parse(mySongs);
+			let newMySongs = mySongs.filter(song => song.id !== songId)
+			await this._storage.setItem(STORAGE_MY_SONGS_PATH, JSON.stringify(newMySongs));
+			return;
+		}
+	},
 };
 
 module.exports = API;

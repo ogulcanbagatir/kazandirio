@@ -198,7 +198,7 @@ export default class Tab2 extends React.PureComponent {
       <View style={styles.header}>
         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: width * 0.868}}>
           <Image source={require("../assets/kazandirioLogo.png")} style={{width: width * 0.35, opacity: 0.85, alignItems: "center", height: width * 0.35 * 0.271062271,}} resizeMode='contain' />
-          <TouchableOpacity activeOpacity={0.9} style={styles.loginButton} onPress={()=>props.navigation.navigate(user ? 'Profile' : 'Login')}>
+          <TouchableOpacity activeOpacity={0.9} style={styles.loginButton} onPress={()=>this.props.navigation.navigate(user ? 'Profile' : 'Login')}>
             <Ionicons name='person-sharp' size={16} color={'white'}/>
           </TouchableOpacity>
         </View>
@@ -209,8 +209,9 @@ export default class Tab2 extends React.PureComponent {
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={20} color={Colors.white.alpha08}/>
           <TextInput
-            style={[fontStyles.body, styles.textInput, {fontWeight: "500"}]}
+            style={[fontStyles.body, styles.textInput, {fontWeight: "500", color: 'white'}]}
             placeholder='Arayan Bulur'
+            placeholderTextColor="rgb(160,160,160)"
             onChangeText={this.onSearchChange}
             onFocus={()=>this.transformModal(1)}
             autoCapitalize='none'

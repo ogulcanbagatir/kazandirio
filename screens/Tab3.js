@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
 import { width, height } from '../utils/Constants'
 import API from '../utils/API'
 import Constants from 'expo-constants';
@@ -9,15 +9,22 @@ import fontStyles from '../utils/FontStyles';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 export default function Tab3(props){
-  const [items,setItems] = useState([])
+  const [gifts, setGifts] = useState([])
   const [selected, setSelected] = useState(0)
   const transformVal = useSharedValue(0)
+  const [refreshing, setRefreshing] = useState(false)
 
   useEffect(()=>{
-    API.getWallet().then((res)=>{
-      setItems(res)
-    })
+    onRefresh()
   },[])
+
+  const onRefresh = () => {
+    setRefreshing(true)
+    API.getWallet().then((res)=>{
+      setRefreshing(false)
+      setGifts(res)
+    })
+  }
 
   const select = (index) => {
     setSelected(index)
@@ -43,7 +50,7 @@ export default function Tab3(props){
         <Animated.View style={[styles.indicator, transformStyle ]}/>
         <TouchableOpacity style={styles.switch} onPress={()=>select(0)}>
           <Text style={[fontStyles.body, {color: selected === 0 ? 'white' : Colors.pepsiDarkBlue.alpha1}]}>
-            Kampanyalar
+            Hediyeler
           </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.switch} onPress={()=>select(1)}>
@@ -57,15 +64,20 @@ export default function Tab3(props){
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={[fontStyles.title2, {color: Colors.pepsiBlack.alpha1, fontWeight: '400'}]}>
+          {'Cüzdanım'}
+        </Text>
+      </View>
       <ScrollView
         style={{flex: 1}}
-        contentContainerStyle={{}}
+        contentContainerStyle={{paddingBottom: width * 0.15}}
+        refreshControl={<RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />}
       >
-        <View style={styles.header}>
-          <Text style={[fontStyles.title2, {color: Colors.pepsiBlack.alpha1, fontWeight: '400'}]}>
-            {'Cüzdanım'}
-          </Text>
-        </View>
+        
         <View style={styles.headerContainer}>
           <Text style={[fontStyles.title3, {color: Colors.pepsiBlack.alpha1, fontWeight: '400'}]}>
             Pepsi Puan
@@ -75,6 +87,34 @@ export default function Tab3(props){
           </Text>
           {switcher()}
         </View>
+        <View style={{paddingHorizontal: width * 0.066, width: '100%'}}>  
+          {
+            gifts.map((item, index)=>{
+              console.log(item)
+              return (
+                <View style={styles.gift}>
+                  <View style={styles.giftHeader}>
+                    <Text style={[fontStyles.footnoteLight, {color: Colors.pepsiDarkBlue.alpha1}]}>
+                      {item.campaignName}
+                    </Text>
+                  </View>
+                  <View style={{flexDirection: 'row', width: '100%', paddingHorizontal: width * 0.033, paddingVertical: width * 0.05, alignItems: 'center',}}>
+                    <Image source={{uri: item.imageUrl}} style={{width: width * 0.25, height: width * 0.25}}/>
+                    <View style={{marginLeft: width * 0.05}}>
+                      <Text style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1}]}>
+                        {item.name}
+                      </Text>
+                      <Text style={[fontStyles.subhead2, {color: Colors.pepsiBlack.alpha1, marginTop: width * 0.05}]}>
+                        {item.amount + ' ' + item.benefitType}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              )
+            })
+          }
+        </View>
+        
       </ScrollView>
     </View>
   )
@@ -104,7 +144,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     height: 44,
     flexDirection: 'row',
-    backgroundColor: Colors.pepsiGray.alpha04,
+    backgroundColor: Colors.pepsiGray.alpha05,
     overflow: 'hidden',
     marginTop: width * 0.05
   },
@@ -124,9 +164,23 @@ const styles = StyleSheet.create({
     flex: 1, 
     width: width, 
     paddingHorizontal: width * 0.066, 
-    marginTop: width * 0.05,
+    paddingTop: width * 0.05,
     borderBottomWidth: 1,
-    borderColor: Colors.pepsiBlack.alpha05,
+    borderColor: Colors.pepsiGray.alpha05,
+    backgroundColor: 'white',
     paddingBottom: width * 0.05
+  },
+  gift: {
+    width: '100%',
+    borderRadius: 10,
+    backgroundColor: 'white',
+    marginTop: width * 0.05
+  },
+  giftHeader: {
+    width: '100%',
+    borderBottomWidth: 1,
+    borderColor: Colors.pepsiGray.alpha03,
+    paddingHorizontal: width * 0.05,
+    paddingVertical: width * 0.033
   }
 })

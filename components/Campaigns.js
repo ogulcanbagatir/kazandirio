@@ -4,7 +4,7 @@ import Colors from '../utils/Colors';
 import { width, height } from '../utils/Constants'
 import fontStyles from '../utils/FontStyles';
 import API from '../utils/API'
-import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
+import Animated, { useAnimatedScrollHandler, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import CampaignBox from './CampaignBox';
 
 export default function Campaigns(props){
@@ -21,7 +21,7 @@ export default function Campaigns(props){
     onScroll: (event)=> {
       currentIndex.value = event.contentOffset.x / (width * 0.7)
     },
-    onMomentumEnd: (event)=> {
+    onEndDrag: (event)=>{
       currentIndex.value = Math.round(event.contentOffset.x / (width * 0.7))
     }
   })

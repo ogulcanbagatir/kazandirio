@@ -200,6 +200,12 @@ const API = {
 	},
 	getWallet: function(){
 		return this.makeHttpRequest(`/wallet`, 'GET');
+	},
+	useCode: function(code){
+		return this.makeHttpRequest(`/code/${code}/redeem`, 'POST');
+	},
+	generateCode: function(){
+		return this.makeHttpRequest(`/code/generate`, 'GET');
 	}
 };
 

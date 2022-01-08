@@ -105,5 +105,15 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 1 , height: 2},
     shadowRadius: 2,
     shadowOpacity: 0.5
+  },
+  campaignButton: {
+    width: width * 0.2,
+    height: width * 0.16,
+    borderRadius: width * 0.15,
+    position: 'absolute',
+    bottom: 80,
+    right: width * 0.066,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 })

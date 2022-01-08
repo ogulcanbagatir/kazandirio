@@ -7,6 +7,8 @@ import IsphoneX from '../utils/IsPhoneX'
 import {Ionicons, Feather, Entypo} from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient';
 import API from '../utils/API'
+import MusicRow from'../components/MusicRow'
+import {Audio} from 'expo-av'
 
 const authRequest = new AuthRequest({
   responseType: ResponseType.Token,
@@ -110,7 +112,7 @@ export default class Tab2 extends React.PureComponent {
       playlists: [],
       accessToken: null,
       showSpotifyView: true,
-      headerPosY: 0
+      headerPosY: 0,
     }
   }
 
@@ -185,6 +187,11 @@ export default class Tab2 extends React.PureComponent {
         }
       ])
     }else{
+      if(value === 0){
+        this.searchInputRef.clear()
+        this.setState({trackObjects: []})
+      }
+
       Animated.timing(this.modalValue, {
         toValue: value,
         duration: 250,
@@ -198,7 +205,7 @@ export default class Tab2 extends React.PureComponent {
       <View style={styles.header}>
         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: width * 0.868}}>
           <Image source={require("../assets/kazandirioLogo.png")} style={{width: width * 0.35, opacity: 0.85, alignItems: "center", height: width * 0.35 * 0.271062271,}} resizeMode='contain' />
-          <TouchableOpacity activeOpacity={0.9} style={styles.loginButton} onPress={()=>props.navigation.navigate(user ? 'Profile' : 'Login')}>
+          <TouchableOpacity activeOpacity={0.9} style={styles.loginButton} onPress={()=>this.props.navigation.navigate(user ? 'Profile' : 'Login')}>
             <Ionicons name='person-sharp' size={16} color={'white'}/>
           </TouchableOpacity>
         </View>
@@ -216,6 +223,7 @@ export default class Tab2 extends React.PureComponent {
             autoCapitalize='none'
             autoComplete='off'
             autoCorrect={false}
+            ref={ref=> this.searchInputRef = ref}
             
           />
           <TouchableOpacity style={styles.closeSearchButton} activeOpacity={0.9} onPress={()=>this.transformModal(0)}>
@@ -280,6 +288,7 @@ export default class Tab2 extends React.PureComponent {
   }
 
   modal = () => {
+
     const modalHeight = height - this.state.headerPosY
     const modalTransform = {
       transform: [
@@ -299,6 +308,7 @@ export default class Tab2 extends React.PureComponent {
         <ScrollView
           style={{flex: 1}}
           contentContainerStyle={{paddingBottom: 10, paddingTop: 16}}
+          
         >
           {
             this.state.trackObjects.length === 0 ?
@@ -307,28 +317,9 @@ export default class Tab2 extends React.PureComponent {
             </Text>
             :
             this.state.trackObjects.map((item, index)=>{
+              const isSelected = this.state.myList.find(song => song.id === item.id)
               return (
-                <TouchableOpacity key={index + 'er'} style={styles.myListRowContainer}>
-                  <View style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}}>
-                    <Image source={{uri: item.albumImage}} style={{width: 44, height: 44, position: "absolute", top: 0, opacity: 0.55}} resizeMode="cover" />
-                    <Ionicons name={"play"} color={Colors.pepsiYellow.alpha1} size={20}/>
-                  </View>
-
-                  <View style={{marginLeft: width * 0.033, flex: 1}}>
-                    <Text numberOfLines={2} style={[fontStyles.subhead, {color: Colors.pepsiBlack.alpha1, fontWeight: "600", shadowColor: Colors.pepsiDarkBlue.alpha1, shadowOpacity: 0.2, shadowRadius: 3}]}>
-                      {item.songName }
-                    </Text>
-
-                    <Text style={[fontStyles.footnoteLight, {color: Colors.pepsiGray.alpha1, fontWeight: "600", shadowColor: Colors.pepsiDarkBlue.alpha1, shadowOpacity: 0.2, shadowRadius: 3, marginTop: 8}]}>
-                      {item.artistName + ' • ' + item.songDuration}
-                    </Text>
-                    
-                  </View>
-
-                  <TouchableOpacity style={[styles.cancelButtonRow, {backgroundColor: Colors.pepsiText.alpha03, borderRadius: 5, marginLeft: 8}]} onPress={()=>this.onAddSong(item)}>
-                    <Feather name="plus" color={Colors.pepsiBlack.alpha1} size={18}/>
-                  </TouchableOpacity>
-                </TouchableOpacity>
+                <MusicRow key={index + 'er'} item={item} index={index} onAddSong={()=>this.onAddSong(item)} isSelected={isSelected}/>
               )
             })
           }
@@ -356,7 +347,7 @@ export default class Tab2 extends React.PureComponent {
       Alert.alert('Hata!', 'Birşeyler ters gitti. Lütfen tekrar deneyiniz.', [
         {
           text: 'Tekrar Dene',
-          onPress: ()=> this.onAddSong(song)
+          onPress: ()=> this.deleteListRow(id,index)
         },
         {
           text: 'Kapat'
@@ -365,13 +356,38 @@ export default class Tab2 extends React.PureComponent {
     })   
   }
 
+  progress = () => {
+    return(
+      <View style={styles.progressContainer}>
+        <View>
+          <Text style={[fontStyles.title3, {color: Colors.pepsiDarkBlue.alpha1}]}>
+            {'Biriken Puan: ' + 324}
+          </Text>
+          <View style={{flexDirection: 'row', marginTop: width * 0.02, alignItems: 'center'}}>
+            <Feather name='clock' size={15} color={Colors.pepsiDarkBlue.alpha06}/>
+            <Text style={[fontStyles.footnoteLight, {color: Colors.pepsiDarkBlue.alpha07, marginLeft: 6}]}>
+              {'4 saat'}
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity style={styles.collectButton} activeOpacity={0.9}>
+          <Image source={require('../assets/lottie/coins.png')} style={{width: 30, marginTop: -1.5, height: 30}} resizeMode='cover'/>
+          <Text style={[fontStyles.footnoteBold, {fontWeight: "500", marginLeft: 2, color: Colors.pepsiYellow.alpha1}]}>
+            Topla
+          </Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
   screen1 = () => {
     return (
       <View style={[styles.screenContainer]}>
         <ScrollView
           style={{flex: 1}}
-          contentContainerStyle={{paddingVertical: width * 0.075}}
+          contentContainerStyle={{paddingTop: width * 0.075, paddingBottom: width * 0.1}}
         >
+          {this.progress()}
           <Text style={[fontStyles.title2, {marginLeft: width * 0.066, color: Colors.pepsiBlack.alpha1}]}>
             Sana Özel
           </Text>
@@ -380,7 +396,7 @@ export default class Tab2 extends React.PureComponent {
               showsHorizontalScrollIndicator={false}
               horizontal
               style={{width: width}}
-              contentContainerStyle={{paddingHorizontal: width * 0.066,}}
+              contentContainerStyle={{paddingHorizontal: width * 0.066}}
             >
               {
                 this.state.playlists.map((item, index) => {
@@ -412,18 +428,26 @@ export default class Tab2 extends React.PureComponent {
           <View style={{width: width}}>
             {
               this.state.myList.length == 0 ? 
-              <Text style={[fontStyles.footnoteBold, {color: Colors.pepsiGray.alpha05, marginHorizontal: width * 0.066, lineHeight: 20, marginTop: width * 0.02}]}>
-                Listenize şarkılar ekleyerek kazanmaya başlayın.
-              </Text>
+              <View>
+                <Text style={[fontStyles.footnoteBold, {color: Colors.pepsiGray.alpha05, marginHorizontal: width * 0.066, lineHeight: 20, marginTop: width * 0.02}]}>
+                  Listenize şarkılar ekleyerek kazanmaya başlayın.
+                </Text>
+                <TouchableOpacity activeOpacity={0.9} style={styles.createListButton} onPress={()=>this.transformModal(1)}>
+                  <Feather name='plus' size={32} color={Colors.pepsiDarkBlue.alpha1}/>
+                  <Text  style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1, marginTop: width *0.033}]}>
+                    {'Şarkı Ekle'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
               :
               this.state.myList.map((item, index) => {
                 return (
                   <TouchableOpacity key={index + "ddd"} style={styles.myListRowContainer}>
-                    <View style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}}>
+                    <TouchableOpacity style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}}>
                       <Image source={{uri: item.albumImage}} style={{width: 44, height: 44, position: "absolute", top: 0, opacity: 0.55}} resizeMode="cover" />
                       <Ionicons name={"play"} color={Colors.pepsiYellow.alpha1} size={20}/>
-                    </View>
-
+                    </TouchableOpacity>
                     <View style={{marginLeft: width * 0.033, flex: 1}}>
                       <Text style={[fontStyles.subhead, {color: Colors.pepsiBlack.alpha1, fontWeight: "600", shadowColor: Colors.pepsiDarkBlue.alpha1, shadowOpacity: 0.2, shadowRadius: 3}]}>
                         {item.songName}
@@ -431,17 +455,7 @@ export default class Tab2 extends React.PureComponent {
                       <Text style={[fontStyles.footnoteBold, {marginTop: width * 0.02, color: Colors.pepsiGray.alpha1, fontWeight: "600", shadowColor: Colors.pepsiDarkBlue.alpha1, shadowOpacity: 0.2, shadowRadius: 3}]}>
                         {item.artistName + ' • ' + item.songDuration}
                       </Text>
-                      {/* <View style={{marginTop: width * 0.033, flexDirection: "row", alignItems: "center"}}>
-                        <View style={{overflow: "hidden", width: width * 0.4, height: 4, backgroundColor: Colors.pepsiBg.alpha1, borderRadius: 10}}>
-                          <View style={{height: 4, width: width * 0.22, backgroundColor: Colors.pepsi.alpha1}}/>
-                        </View>
-
-                        <Text style={[fontStyles.footnoteBold, {fontWeight: "400", marginLeft: 6, marginBottom: 1}]} >
-                          %23
-                        </Text>
-                      </View> */}
                     </View>
-
                     <TouchableOpacity activeOpacity={1.0} onPress={() => this.deleteListRow(item.id, index) } style={styles.cancelButtonRow}>
                       <Feather name="x" color={Colors.pepsiBlack.alpha1} size={18}/>
                     </TouchableOpacity>
@@ -677,5 +691,43 @@ const styles = StyleSheet.create({
     height: 46,
     paddingLeft: 6,
     justifyContent: 'center'
-  }
+  },
+  progressContainer: {
+    width: width * 0.85,
+    paddingVertical: width *0.033,
+    backgroundColor:Colors.pepsiYellow.alpha1,
+    alignSelf: 'center',
+    borderRadius: 10,
+    marginBottom: width * 0.05,
+    paddingHorizontal: width * 0.05,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  collectButton: {
+    justifyContent: 'center', 
+    borderRadius: 12, 
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.pepsiDarkBlue.alpha1,
+    shadowColor: Colors.pepsiDarkBlue.alpha1,
+    shadowOpacity: 1,
+    shadowOffset: {width: 1, height: 1},
+    shadowRadius: 2,
+    paddingLeft: 4,
+    paddingRight: 16,
+    paddingVertical: 4
+  },
+  createListButton: {
+    width: width * 0.85,
+    borderWidth: 1,
+    borderColor: Colors.pepsiDarkBlue.alpha1,
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: width * 0.05,
+    alignSelf: 'center',
+    marginTop: width * 0.05,
+    borderRadius: 10
+  },
 })

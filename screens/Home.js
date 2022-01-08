@@ -44,7 +44,7 @@ export default class Home extends React.PureComponent{
         <View style={styles.tabContainer}>
           <TouchableOpacity activeOpacity={1} style={[styles.tabButton]} onPress={()=>this.onTabPressed(0)}>
             <Ionicons size={24} name='home' color={this.state.selectedTab === 0 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha1}/>
-            <Text style={[FontStyles.footnoteBold, {color: this.state.selectedTab === 0 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha1, marginTop: 5}]}>
+            <Text style={[FontStyles.footnoteBold, {fontWeight: "600", color: this.state.selectedTab === 0 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha06, marginTop: 5}]}>
               Kampanyalar
             </Text>
           </TouchableOpacity>
@@ -53,14 +53,14 @@ export default class Home extends React.PureComponent{
             <View style={styles.iconContainer}>
               <Ionicons size={30} name={this.state.selectedTab == 1 ? "headset" : "headset-outline"} color={'white'}/>
             </View>
-            <Text style={[FontStyles.footnoteBold, {color: Colors.secondaryDark.alpha1, marginTop: width * 0.075}]}>
+            <Text style={[FontStyles.footnoteBold, {color: this.state.selectedTab === 1 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha06, marginTop: width * 0.075}]}>
               KazandiRio
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity activeOpacity={1} style={styles.tabButton} onPress={()=>this.onTabPressed(2)}>
             <Ionicons size={24} name='wallet' color={this.state.selectedTab === 2 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha1}/>
-            <Text style={[FontStyles.footnoteBold, {color: this.state.selectedTab === 2 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha1, marginTop: 5}]}>
+            <Text style={[FontStyles.footnoteBold, {fontWeight: "600", color: this.state.selectedTab === 2 ? Colors.pepsiDarkBlue.alpha1 : Colors.secondaryDark.alpha06, marginTop: 5}]}>
               Cüzdanım
             </Text>
           </TouchableOpacity>

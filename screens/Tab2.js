@@ -9,6 +9,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import API from '../utils/API'
 import MusicRow from'../components/MusicRow'
 import {Audio} from 'expo-av'
+import CoinCollect from '../components/CoinCollect';
+import ConfettiCannon from 'react-native-confetti-cannon';
+
 
 const authRequest = new AuthRequest({
   responseType: ResponseType.Token,
@@ -95,6 +98,7 @@ export default class Tab2 extends React.PureComponent {
     this.tabValue = new Animated.Value(0)
     this.spotifyOpacityValue = new Animated.Value(1)
     this.modalValue = new Animated.Value(0)
+    this.playingMusic = new Audio.Sound()
 
     this.tabLineAnimate = {
       transform: [{
@@ -113,6 +117,8 @@ export default class Tab2 extends React.PureComponent {
       accessToken: null,
       showSpotifyView: true,
       headerPosY: 0,
+      playingMusic: null,
+      isPlaying: false
     }
   }
 
@@ -158,7 +164,7 @@ export default class Tab2 extends React.PureComponent {
     }
     searchTracks(text, this.state.accessToken)
         .then(tracks=>{
-
+          console.log(tracks[0])
           let trackObjects = [];
 
           for(let track of tracks){
@@ -167,10 +173,12 @@ export default class Tab2 extends React.PureComponent {
             let songDuration = [Math.floor(durationSec / 60), durationSec % 60];
             let songName = track.name;
             let albumImage = track.album.images[0].url;
+            let preview_url = track.preview_url
+            
 
             trackObjects.push({
               artistName, songDuration: String(songDuration[0]) + ":" + String(songDuration[1]).padStart(2, '0'),
-              songName, albumImage, id: track.id, url: track.external_urls.spotify,
+              songName, albumImage, id: track.id, url: track.external_urls.spotify, previewUrl: preview_url
             })
           }
           console.log(trackObjects)
@@ -181,9 +189,13 @@ export default class Tab2 extends React.PureComponent {
   transformModal = (value) => {
     if(!this.state.accessToken){
       Keyboard.dismiss()
-      Alert.alert('Giriş Yap','Arama yapabilmek için Spotify hesabınıza bağlanmalısınız.', [
+      Alert.alert("Spotify'ı Bağla",'Şarkı ekleyeblimek için Spotify hesabınızı bağlamalısınız.', [
         {
-          text: 'Tamam'
+          text: "Spotify'ı Bağla",
+          onPress: this.makeCall
+        },
+        {
+          text: 'Kapat' ,
         }
       ])
     }else{
@@ -227,10 +239,11 @@ export default class Tab2 extends React.PureComponent {
             ref={ref=> this.searchInputRef = ref}
             
           />
-          <TouchableOpacity style={styles.closeSearchButton} activeOpacity={0.9} onPress={()=>this.transformModal(0)}>
-            <Feather name='x' size={20} color={'white'}/>
-          </TouchableOpacity>
-
+          <Animated.View style={{opacity: this.modalValue}}>
+            <TouchableOpacity style={styles.closeSearchButton} activeOpacity={0.9} onPress={()=>this.transformModal(0)}>
+              <Feather name='x' size={20} color={'white'}/>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
 
         <View style={styles.headerOptions} onLayout={(event)=> {
@@ -252,6 +265,16 @@ export default class Tab2 extends React.PureComponent {
           }
           <Animated.View style={[styles.headerBottomLine, this.tabLineAnimate]}/>
         </View>
+        <ConfettiCannon
+          count={80}
+          fallSpeed={1000}
+          origin={{x: width / 2, y: -700}}
+          autoStart={false}
+          ref={ref => (this.explosion = ref)}
+          colors={[Colors.pepsi.alpha1, Colors.pepsiDarkBlue.alpha1, Colors.pepsiYellow.alpha1, Colors.pepsiDarkOranj.alpha1, Colors.pepsiPurple.alpha1, Colors.pepsiTurquoise.alpha1]}
+          fadeOut
+          explosionSpeed={1200}
+        />
       </View>
     )
   }
@@ -319,7 +342,7 @@ export default class Tab2 extends React.PureComponent {
             :
             this.state.trackObjects.map((item, index)=>{
               const isSelected = this.state.myList.find(song => song.id === item.id)
-              
+
               return (
                 <MusicRow key={index + 'er'} item={item} index={index} onAddSong={()=>this.onAddSong(item)} isSelected={isSelected}/>
               )
@@ -358,6 +381,7 @@ export default class Tab2 extends React.PureComponent {
     })   
   }
 
+<<<<<<< HEAD
   progress = () => {
     return(
       <View style={styles.progressContainer}>
@@ -380,6 +404,36 @@ export default class Tab2 extends React.PureComponent {
         </TouchableOpacity>
       </View>
     )
+=======
+
+  playMusic = (item,index) => {
+    if(this.state.isPlaying){
+      if(index === this.state.playingMusic){
+        this.playingMusic.pauseAsync().then(()=>{
+          this.setState({ isPlaying: false})
+        })
+      }else{
+        this.playingMusic.unloadAsync().then(()=>{
+          this.playingMusic.loadAsync({uri: item.previewUrl}, {shouldPlay: true}).then(()=>{
+            this.setState({playingMusic: index, isPlaying: true})
+          })
+        })
+      }
+
+    }else{
+      if(this.state.playingMusic !== null && this.state.playingMusic === index){
+        this.playingMusic.playAsync().then(()=>{
+          this.setState({ isPlaying: true})
+        })
+      }else{
+        this.playingMusic.unloadAsync().then(()=>{
+          this.playingMusic.loadAsync({uri: item.previewUrl}, {shouldPlay: true}).then(()=>{
+            this.setState({playingMusic: index, isPlaying: true})
+          })
+        })
+      }
+    }
+>>>>>>> 88463a9b0afd75707fc1ba8e87d0f264d6d9bd3c
   }
 
   screen1 = () => {
@@ -389,7 +443,7 @@ export default class Tab2 extends React.PureComponent {
           style={{flex: 1}}
           contentContainerStyle={{paddingTop: width * 0.075, paddingBottom: width * 0.1}}
         >
-          {this.progress()}
+          <CoinCollect animateWallet={()=>{this.props.animateWallet; this.explosion.start()}} />
           <Text style={[fontStyles.title2, {marginLeft: width * 0.066, color: Colors.pepsiBlack.alpha1}]}>
             Sana Özel
           </Text>
@@ -446,9 +500,12 @@ export default class Tab2 extends React.PureComponent {
               this.state.myList.map((item, index) => {
                 return (
                   <TouchableOpacity key={index + "ddd"} style={styles.myListRowContainer}>
-                    <TouchableOpacity style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}}>
+                    <TouchableOpacity disabled={!item.previewUrl} style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}} onPress={()=>this.playMusic(item, index)}>
                       <Image source={{uri: item.albumImage}} style={{width: 44, height: 44, position: "absolute", top: 0, opacity: 0.55}} resizeMode="cover" />
-                      <Ionicons name={"play"} color={Colors.pepsiYellow.alpha1} size={20}/>
+                      {
+                        item.previewUrl &&
+                        <Ionicons name={ this.state.playingMusic === index && this.state.isPlaying ? "pause" : "play" }  color={Colors.pepsiYellow.alpha1} size={20}/>
+                      }
                     </TouchableOpacity>
                     <View style={{marginLeft: width * 0.033, flex: 1}}>
                       <Text style={[fontStyles.subhead, {color: Colors.pepsiBlack.alpha1, fontWeight: "600", shadowColor: Colors.pepsiDarkBlue.alpha1, shadowOpacity: 0.2, shadowRadius: 3}]}>
@@ -498,7 +555,7 @@ export default class Tab2 extends React.PureComponent {
 
   screen2 = () => {
     return (
-      <View style={[styles.screenContainer, {backgroundColor: "red"}]}>
+      <View style={[styles.screenContainer, {}]}>
 
       </View>
     )
@@ -514,7 +571,7 @@ export default class Tab2 extends React.PureComponent {
 
   screen4 = () => {
     return (
-      <View style={[styles.screenContainer, {backgroundColor: "green"}]}>
+      <View style={[styles.screenContainer, {}]}>
 
       </View>
     )
@@ -561,6 +618,7 @@ const styles = StyleSheet.create({
     paddingTop: width * 0.2,
     borderBottomColor: Colors.pepsiGray.alpha01,
     borderBottomWidth: 0,
+    overflow: 'hidden'
   },
 
   loginButton: {
@@ -657,10 +715,10 @@ const styles = StyleSheet.create({
   headerBottomLine: {
     width: (width - (width * 0.066 * 2))/4,
     position: "absolute",
-    bottom: -2,
+    bottom: 4,
     height: 5, 
     borderRadius: 10, 
-    backgroundColor: Colors.pepsiBlue.alpha1
+    backgroundColor: Colors.pepsiYellow.alpha1
   },
   spotifyButton: {
     width: width * 0.7,

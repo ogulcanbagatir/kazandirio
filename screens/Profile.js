@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { width, height } from '../utils/Constants'
 import Colors from '../utils/Colors'
 import FontStyles from '../utils/FontStyles'
@@ -57,8 +57,8 @@ const styles = StyleSheet.create({
   },
   header: {
     width: width,
-    paddingTop: Constants.statusBarHeight + 10,
-    height: Constants.statusBarHeight + 54,
+    paddingTop: Platform.OS == 'android' ? 10 : (Constants.statusBarHeight + 10),
+    height: Platform.OS == 'android' ? 54 : (Constants.statusBarHeight + 54),
     alignItems: 'center',
     backgroundColor:'white'
   },
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     left: width * 0.066,
-    top: Constants.statusBarHeight + 8,
+    top: Platform.OS == 'android' ? 10 : (Constants.statusBarHeight + 8),
     shadowColor: Colors.pepsiDarkBlue.alpha1,
     shadowOpacity: 0.5,
     shadowOffset: {width: 1, height: 1}

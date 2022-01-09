@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "kazandirio",
+    "name": "DinleKazan",
     "slug": "kazandirio",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -30,6 +30,7 @@
     },
     "plugins": [
       "expo-av"
-    ]
+    ],
+    "description": ""
   }
 }

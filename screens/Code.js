@@ -19,14 +19,17 @@ export default function Code(props){
     setLoading(true)
     API.generateCode().then((code)=>{
       console.log(code.code)
-      API.useCode(code.code).then((res)=>{
-        console.log(res)
-        setLoading(false)
-        props.navigation.goBack()
-      }).catch((e)=>{
-        alert('Bir hata oluştu. Lütfen tekrar deneyiniz.')
-        setLoading(false)
-      })
+      setTimeout(()=>{
+        API.useCode(code.code).then((res)=>{
+          console.log(res)
+          setLoading(false)
+          props.navigation.goBack()
+        }).catch((e)=>{
+          alert('Bir hata oluştu. Lütfen tekrar deneyiniz.')
+          setLoading(false)
+        })
+      }, 2000);
+      
     })
   }
 

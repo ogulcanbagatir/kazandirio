@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: width * 0.066,
     height: Constants.statusBarHeight + 80,
-    paddingTop: IsphoneX ?  Constants.statusBarHeight :  Constants.statusBarHeight + 16 ,
+    paddingTop: Platform.OS === 'android' ? 0 : (IsphoneX ?  Constants.statusBarHeight :  Constants.statusBarHeight + 16 ),
     alignItems: 'center',
     backgroundColor: 'white'
   },

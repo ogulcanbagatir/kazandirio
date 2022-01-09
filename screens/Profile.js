@@ -14,9 +14,10 @@ const buttons = [
   {name: 'Profil Bilgilerim', icon: 'person'},
   {name: 'Bildirimler', icon: 'notifications'},
   {name: 'Sözleşmeler ve Koşullar', icon: 'document'},
-  {name: 'Oturumu Kapat', icon: 'log-out', onPress: (setUser)=>{
+  {name: 'Oturumu Kapat', icon: 'log-out', onPress: (setUser, navigation)=>{
     API.logout().then(()=>{
-      setUser(null)
+      setUser(null);
+      navigation.goBack();
     })
   }},
 ]
@@ -36,7 +37,7 @@ export default function Profile(props){
       {
         buttons.map((item, index)=>{
           return(
-            <TouchableOpacity key={index + 'g'} style={styles.row} activeOpacity={0.9} onPress={()=>{item.onPress && item.onPress(setUser)}}>
+            <TouchableOpacity key={index + 'g'} style={styles.row} activeOpacity={0.9} onPress={()=>{item.onPress && item.onPress(setUser, props.navigation)}}>
               <Ionicons name={item.icon} color={Colors.pepsiDarkBlue.alpha1} size={18}/>
               <Text style={[fontStyles.footnoteLight, {marginLeft: width * 0.02}]}>
                 {item.name}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Animated, Image, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, LayoutAnimation } from 'react-native';
+import { Alert, Animated, Image, Keyboard, Platform, StatusBar, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, LayoutAnimation } from 'react-native';
 import Colors from '../utils/Colors';
 import { width, height, statusBarHeight } from '../utils/Constants'
 import fontStyles from '../utils/FontStyles';
@@ -12,6 +12,7 @@ import {Audio} from 'expo-av'
 import CoinCollect from '../components/CoinCollect';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import {UserContext} from '../utils/Context'
+import * as Linking from 'expo-linking';
 
 const authRequest = new AuthRequest({
   responseType: ResponseType.Token,
@@ -420,6 +421,7 @@ export default class Tab2 extends React.PureComponent {
   screen1 = () => {
     return (
       <View style={[styles.screenContainer]}>
+        <StatusBar barStyle='light-content'/>
         <ScrollView
           style={{flex: 1}}
           contentContainerStyle={{paddingTop: width * 0.075, paddingBottom: width * 0.1}}
@@ -441,7 +443,7 @@ export default class Tab2 extends React.PureComponent {
               {
                 this.state.playlists.map((item, index) => {
                   return (
-                    <TouchableOpacity key={index + "xxx" + index} onPress={() => {}} style={styles.pepsiCardButton} activeOpacity={1}>
+                    <TouchableOpacity key={index + "xxx" + index} onPress={() => {Linking.openURL(item.external_urls.spotify)}} style={styles.pepsiCardButton} activeOpacity={1}>
                       <View style={styles.pepsiCardInnerContainer}>
                         <Image source={{uri: item.images[0].url}} style={styles.pepsiCardImage} resizeMode="cover" />
                         <LinearGradient colors={[Colors.pepsiDarkBlue.alpha09, Colors.pepsiDarkBlue.alpha01]} style={styles.pepsiCardGradient} start={[0.5, 1]} end={[0.5, 0]} />
@@ -451,7 +453,7 @@ export default class Tab2 extends React.PureComponent {
                         </View>
 
                         <Text style={[fontStyles.body, {fontWeight: "700", lineHeight: 24, color: Colors.pepsiBg.alpha1, }]}>
-                          {item.name}
+                          {item.name.split(" | ")[1]}
                         </Text>
                       </View>
                     </TouchableOpacity>
@@ -483,7 +485,7 @@ export default class Tab2 extends React.PureComponent {
               :
               this.state.myList.map((item, index) => {
                 return (
-                  <TouchableOpacity key={index + "ddd"} style={styles.myListRowContainer}>
+                  <TouchableOpacity key={index + "ddd"} style={styles.myListRowContainer} onPress={()=>{Linking.openURL(item.url)}}>
                     <TouchableOpacity disabled={!item.previewUrl} style={{width: 44, height: 44, overflow: "hidden", borderRadius: 12, backgroundColor: Colors.pepsi.alpha1, justifyContent: 'center', alignItems: "center"}} onPress={()=>this.playMusic(item, index)}>
                       <Image source={{uri: item.albumImage}} style={{width: 44, height: 44, position: "absolute", top: 0, opacity: 0.55}} resizeMode="cover" />
                       {
@@ -601,11 +603,10 @@ const styles = StyleSheet.create({
     height: height - (IsphoneX ? 64 + 20 : 64)
   },
   header: {
-    paddingTop: statusBarHeight,
     width: width,
     backgroundColor: Colors.pepsiDarkBlue.alpha1,
     paddingHorizontal: width * 0.066,
-    paddingTop: width * 0.2,
+    paddingTop: Platform.OS === 'android' ? (width * 0.075) : (width * 0.2),
     borderBottomColor: Colors.pepsiGray.alpha01,
     borderBottomWidth: 0,
     overflow: 'hidden'

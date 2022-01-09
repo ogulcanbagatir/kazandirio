@@ -109,8 +109,19 @@ export default function Tab3(props){
             </View>
             <View style={{paddingHorizontal: width * 0.066, width: '100%'}}>  
               {
+                gifts.length == 0 ?
+
+                <View style={{marginHorizontal: 40, marginTop: 100}}>
+                  <Text style={{color: 'rgb(70,70,70)', fontSize: 18, textAlign: 'center', lineHeight: 26}}>
+                    Henüz hiçbir hediye kazanmadınız. Hediye kazanmak için PepsiCo ürünlerinden çıkan kodu okutun.
+                  </Text>
+                </View>
+                
+                
+                :
+
+
                 gifts.map((item, index)=>{
-                  console.log(item)
                   return (
                     <View key={index + "dde"} style={styles.gift}>
                       <View style={styles.giftHeader}>
@@ -153,12 +164,12 @@ const styles = StyleSheet.create({
   },
   header: {
     width: width,
-    paddingTop: Constants.statusBarHeight ,
+    paddingTop: Platform.OS === 'android' ? 0 : Constants.statusBarHeight ,
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    height: Constants.statusBarHeight + 48,
+    height: Platform.OS === 'android' ? 48 : (Constants.statusBarHeight + 48),
     shadowColor: Colors.pepsiBlack.alpha1,
     shadowOffset: {width: 0, height: 0.5},
     shadowOpacity: 0.2,

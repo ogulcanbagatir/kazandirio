@@ -381,30 +381,6 @@ export default class Tab2 extends React.PureComponent {
     })   
   }
 
-<<<<<<< HEAD
-  progress = () => {
-    return(
-      <View style={styles.progressContainer}>
-        <View>
-          <Text style={[fontStyles.title3, {color: Colors.pepsiDarkBlue.alpha1}]}>
-            {'Biriken Puan: ' + 324}
-          </Text>
-          <View style={{flexDirection: 'row', marginTop: width * 0.02, alignItems: 'center'}}>
-            <Feather name='clock' size={15} color={Colors.pepsiDarkBlue.alpha06}/>
-            <Text style={[fontStyles.footnoteLight, {color: Colors.pepsiDarkBlue.alpha07, marginLeft: 6}]}>
-              {'1 saat 12 dk kaldı'}
-            </Text>
-          </View>
-        </View>
-        <TouchableOpacity style={styles.collectButton} activeOpacity={0.9}>
-          <Image source={require('../assets/lottie/coins.png')} style={{width: 30, marginTop: -1.5, height: 30}} resizeMode='cover'/>
-          <Text style={[fontStyles.footnoteBold, {fontWeight: "500", marginLeft: 2, color: Colors.pepsiYellow.alpha1}]}>
-            Topla
-          </Text>
-        </TouchableOpacity>
-      </View>
-    )
-=======
 
   playMusic = (item,index) => {
     if(this.state.isPlaying){
@@ -433,7 +409,6 @@ export default class Tab2 extends React.PureComponent {
         })
       }
     }
->>>>>>> 88463a9b0afd75707fc1ba8e87d0f264d6d9bd3c
   }
 
   screen1 = () => {

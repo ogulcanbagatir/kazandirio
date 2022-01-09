@@ -230,7 +230,7 @@ export default class Tab2 extends React.PureComponent {
           <Ionicons name="search" size={20} color={Colors.white.alpha08}/>
           <TextInput
             style={[fontStyles.body, styles.textInput, {color: Colors.white.alpha1, fontWeight: "500"}]}
-            placeholder='Arayan Bulur'
+            placeholder='Ara...'
             placeholderTextColor={Colors.white.alpha03}
             onChangeText={this.onSearchChange}
             onFocus={()=>this.transformModal(1)}
@@ -430,7 +430,7 @@ export default class Tab2 extends React.PureComponent {
             this.props.animateWallet() 
             }} />
           <Text style={[fontStyles.title2, {marginLeft: width * 0.066, color: Colors.pepsiBlack.alpha1}]}>
-            Sana Özel
+            Pepsi Listeleri
           </Text>
           <View style={{width: width, alignSelf: "baseline", paddingVertical: width * 0.033, paddingBottom: width * 0.066}}>
             <ScrollView

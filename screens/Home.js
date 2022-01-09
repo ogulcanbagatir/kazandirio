@@ -87,8 +87,6 @@ export default class Home extends React.PureComponent{
     ).start(()=>{
       this.setState({isWalletAnimating: false})
     })
-        this.explosion.start()
-
   }
 
   render(){

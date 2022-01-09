@@ -2,10 +2,6 @@ import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import Colors from '../utils/Colors';
 import { width, height } from '../utils/Constants'
 import fontStyles from '../utils/FontStyles';
-import Constants from 'expo-constants';
-import Campaigns from '../components/Campaigns';
-import IsphoneX from '../utils/IsPhoneX'
-import {UserContext} from '../utils/Context'
 import React, {useContext, useState} from 'react';
 import {Ionicons, Feather, } from '@expo/vector-icons'
 

@@ -11,7 +11,7 @@ import MusicRow from'../components/MusicRow'
 import {Audio} from 'expo-av'
 import CoinCollect from '../components/CoinCollect';
 import ConfettiCannon from 'react-native-confetti-cannon';
-
+import {UserContext} from '../utils/Context'
 
 const authRequest = new AuthRequest({
   responseType: ResponseType.Token,
@@ -212,7 +212,7 @@ export default class Tab2 extends React.PureComponent {
     }
   }
 
-  header = () => {
+  header = (user) => {
     return (
       <View style={styles.header}>
         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: width * 0.868}}>
@@ -290,9 +290,16 @@ export default class Tab2 extends React.PureComponent {
   }
 
   onAddSong = (song) => {
+    if(this.state.myList.length === 10){
+      Alert.alert('Şarkı Limiti', 'Daha fazla şarkı ekleyebilmek için puanlarını kullan.', [{
+        text: 'Tamam'
+      }])
+    }
+
     if( this.state.myList.find(item => song.id === item.id)){
       return
     }
+
     API.addSongtoMySongs(song).then(()=>{
       let arr = [...this.state.myList]
       arr.push(song)
@@ -381,31 +388,6 @@ export default class Tab2 extends React.PureComponent {
     })   
   }
 
-<<<<<<< HEAD
-  progress = () => {
-    return(
-      <View style={styles.progressContainer}>
-        <View>
-          <Text style={[fontStyles.title3, {color: Colors.pepsiDarkBlue.alpha1}]}>
-            {'Biriken Puan: ' + 324}
-          </Text>
-          <View style={{flexDirection: 'row', marginTop: width * 0.02, alignItems: 'center'}}>
-            <Feather name='clock' size={15} color={Colors.pepsiDarkBlue.alpha06}/>
-            <Text style={[fontStyles.footnoteLight, {color: Colors.pepsiDarkBlue.alpha07, marginLeft: 6}]}>
-              {'1 saat 12 dk kaldı'}
-            </Text>
-          </View>
-        </View>
-        <TouchableOpacity style={styles.collectButton} activeOpacity={0.9}>
-          <Image source={require('../assets/lottie/coins.png')} style={{width: 30, marginTop: -1.5, height: 30}} resizeMode='cover'/>
-          <Text style={[fontStyles.footnoteBold, {fontWeight: "500", marginLeft: 2, color: Colors.pepsiYellow.alpha1}]}>
-            Topla
-          </Text>
-        </TouchableOpacity>
-      </View>
-    )
-=======
-
   playMusic = (item,index) => {
     if(this.state.isPlaying){
       if(index === this.state.playingMusic){
@@ -433,7 +415,6 @@ export default class Tab2 extends React.PureComponent {
         })
       }
     }
->>>>>>> 88463a9b0afd75707fc1ba8e87d0f264d6d9bd3c
   }
 
   screen1 = () => {
@@ -443,7 +424,10 @@ export default class Tab2 extends React.PureComponent {
           style={{flex: 1}}
           contentContainerStyle={{paddingTop: width * 0.075, paddingBottom: width * 0.1}}
         >
-          <CoinCollect animateWallet={()=>{this.props.animateWallet; this.explosion.start()}} />
+          <CoinCollect animateWallet={()=>{
+            this.explosion.start()
+            this.props.animateWallet() 
+            }} />
           <Text style={[fontStyles.title2, {marginLeft: width * 0.066, color: Colors.pepsiBlack.alpha1}]}>
             Sana Özel
           </Text>
@@ -556,7 +540,7 @@ export default class Tab2 extends React.PureComponent {
   screen2 = () => {
     return (
       <View style={[styles.screenContainer, {}]}>
-
+        
       </View>
     )
   }
@@ -579,26 +563,32 @@ export default class Tab2 extends React.PureComponent {
 
   render() {
     return (
-      <View style={styles.container}>
+      <UserContext.Consumer>
+        {
+          user =>
+          <View style={styles.container}>
         
-        {this.header()}
-
-        <ScrollView
-          ref={ref => this.scrollRef = ref}
-          contentContainerStyle={{}}
-          horizontal
-          scrollEnabled={false}
-          showsHorizontalScrollIndicator={false}
-          pagingEnabled
-          style={styles.innerContainer}
-        >
-          {this.screen1()}
-          {this.screen2()}
-          {this.screen3()}
-          {this.screen4()}
-        </ScrollView>
-        {this.modal()}
-      </View>
+            {this.header(user)}
+  
+            <ScrollView
+              ref={ref => this.scrollRef = ref}
+              contentContainerStyle={{}}
+              horizontal
+              scrollEnabled={false}
+              showsHorizontalScrollIndicator={false}
+              pagingEnabled
+              style={styles.innerContainer}
+            >
+              {this.screen1()}
+              {this.screen2()}
+              {this.screen3()}
+              {this.screen4()}
+            </ScrollView>
+              {this.modal()}
+          </View>
+        }
+      </UserContext.Consumer>
+      
     )
   }
   

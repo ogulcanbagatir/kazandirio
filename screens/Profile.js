@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { width, height } from '../utils/Constants'
 import Colors from '../utils/Colors'
@@ -7,16 +7,22 @@ import IsphoneX from '../utils/IsPhoneX'
 import Constants  from 'expo-constants';
 import fontStyles from '../utils/FontStyles';
 import {Ionicons} from '@expo/vector-icons'
+import API from '../utils/API'
+import {UserContext} from '../utils/Context'
 
 const buttons = [
   {name: 'Profil Bilgilerim', icon: 'person'},
   {name: 'Bildirimler', icon: 'notifications'},
   {name: 'Sözleşmeler ve Koşullar', icon: 'document'},
-  {name: 'Oturumu Kapat', icon: 'log-out'},
-
+  {name: 'Oturumu Kapat', icon: 'log-out', onPress: (setUser)=>{
+    API.logout().then(()=>{
+      setUser(null)
+    })
+  }},
 ]
 
 export default function Profile(props){
+  const {user,setUser} = useContext(UserContext)
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -30,7 +36,7 @@ export default function Profile(props){
       {
         buttons.map((item, index)=>{
           return(
-            <TouchableOpacity key={index + 'g'} style={styles.row} activeOpacity={0.9} >
+            <TouchableOpacity key={index + 'g'} style={styles.row} activeOpacity={0.9} onPress={()=>{item.onPress && item.onPress(setUser)}}>
               <Ionicons name={item.icon} color={Colors.pepsiDarkBlue.alpha1} size={18}/>
               <Text style={[fontStyles.footnoteLight, {marginLeft: width * 0.02}]}>
                 {item.name}

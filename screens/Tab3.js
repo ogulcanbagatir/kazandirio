@@ -124,7 +124,7 @@ export default function Tab3(props){
                           <Text style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1, lineHeight: 28, marginRight: 20}]}>
                             {item.name}
                           </Text>
-                          <Text style={[fontStyles.subhead2, {color: Colors.pepsiBlack.alpha1, marginTop: width * 0.033}]}>
+                          <Text style={[fontStyles.subhead2, {color: Colors.pepsiBlack.alpha1, marginTop: width * 0.033, width: '60%'}]}>
                             {item.amount + ' ' + item.benefitType}
                           </Text>
                         </View>

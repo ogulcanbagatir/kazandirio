@@ -540,7 +540,7 @@ export default class Tab2 extends React.PureComponent {
   screen2 = () => {
     return (
       <View style={[styles.screenContainer, {}]}>
-        
+
       </View>
     )
   }

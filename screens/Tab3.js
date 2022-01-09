@@ -97,11 +97,12 @@ export default function Tab3(props){
 
             <View style={styles.headerContainer}>
               <Text style={[fontStyles.title3, {color: Colors.pepsiBlack.alpha1, fontWeight: '400'}]}>
-                Pepsi Puan
+                Toplam Puan: 
+                <Text style={[fontStyles.title1, {color: Colors.pepsiBlack.alpha1, fontWeight: '400', marginTop: width * 0.05}]}>
+                  72000
+                </Text>
               </Text>
-              <Text style={[fontStyles.title1, {color: Colors.pepsiBlack.alpha1, fontWeight: '400', marginTop: width * 0.05}]}>
-                72000
-              </Text>
+              
               {switcher()}
             </View>
             <View style={{paddingHorizontal: width * 0.066, width: '100%'}}>  
@@ -116,30 +117,27 @@ export default function Tab3(props){
                         </Text>
                       </View>
                       <View style={{flexDirection: 'row', paddingHorizontal: width * 0.033, paddingVertical: width * 0.05, alignItems: 'center',}}>
-                        <Image source={{uri: item.imageUrl}} style={{width: width * 0.25, height: width * 0.25}}/>
+                        <Image resizeMode='contain' source={{uri: item.imageUrl}} style={{width: width * 0.2, height: width * 0.2}}/>
                         <View style={{marginLeft: width * 0.05, flex: 1}}>
                           <Text style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1, lineHeight: 28, marginRight: 20}]}>
                             {item.name}
                           </Text>
-                          <Text style={[fontStyles.subhead2, {color: Colors.pepsiBlack.alpha1, marginTop: width * 0.05}]}>
+                          <Text style={[fontStyles.subhead2, {color: Colors.pepsiBlack.alpha1, marginTop: width * 0.033}]}>
                             {item.amount + ' ' + item.benefitType}
                           </Text>
                         </View>
                       </View>
+                      <TouchableOpacity style={styles.upgradeButton}>
+                        <Image source={require('../assets/power-up.png')} style={{width: 30,  height: 30}} resizeMode='cover'/>
+                        
+                      </TouchableOpacity>
                     </View>
                   )
                 })
               }
             </View>
-
-
           </View>
-
-
         }
-        
-        
-        
       </ScrollView>
     </View>
   )
@@ -207,5 +205,21 @@ const styles = StyleSheet.create({
     borderColor: Colors.pepsiGray.alpha03,
     paddingHorizontal: width * 0.05,
     paddingVertical: width * 0.033
-  }
+  },
+  upgradeButton: {
+    justifyContent: 'center', 
+    borderRadius: 12, 
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.pepsiDarkBlue.alpha1,
+    shadowColor: Colors.pepsiDarkBlue.alpha1,
+    shadowOpacity: 1,
+    shadowOffset: {width: 1, height: 1},
+    shadowRadius: 2,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    position: 'absolute',
+    right: width * 0.033,
+    bottom: width * 0.033
+  },
 })

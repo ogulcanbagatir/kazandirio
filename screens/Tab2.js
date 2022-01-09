@@ -204,7 +204,7 @@ export default class Tab2 extends React.PureComponent {
     return (
       <View style={styles.header}>
         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: width * 0.868}}>
-          <Image source={require("../assets/kazandirioLogo.png")} style={{width: width * 0.35, opacity: 0.85, alignItems: "center", height: width * 0.35 * 0.271062271,}} resizeMode='contain' />
+          <Image source={require("../assets/kazandirioLogo.png")} style={{width: width * 0.35, opacity: 0.95, alignItems: "center", height: width * 0.35 * 0.271062271,}} resizeMode='contain' />
           <TouchableOpacity activeOpacity={0.9} style={styles.loginButton} onPress={()=>this.props.navigation.navigate(user ? 'Profile' : 'Login')}>
             <Ionicons name='person-sharp' size={16} color={'white'}/>
           </TouchableOpacity>
@@ -216,8 +216,9 @@ export default class Tab2 extends React.PureComponent {
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={20} color={Colors.white.alpha08}/>
           <TextInput
-            style={[fontStyles.body, styles.textInput, {fontWeight: "500"}]}
+            style={[fontStyles.body, styles.textInput, {color: Colors.white.alpha1, fontWeight: "500"}]}
             placeholder='Arayan Bulur'
+            placeholderTextColor={Colors.white.alpha03}
             onChangeText={this.onSearchChange}
             onFocus={()=>this.transformModal(1)}
             autoCapitalize='none'
@@ -367,7 +368,7 @@ export default class Tab2 extends React.PureComponent {
           <View style={{flexDirection: 'row', marginTop: width * 0.02, alignItems: 'center'}}>
             <Feather name='clock' size={15} color={Colors.pepsiDarkBlue.alpha06}/>
             <Text style={[fontStyles.footnoteLight, {color: Colors.pepsiDarkBlue.alpha07, marginLeft: 6}]}>
-              {'4 saat'}
+              {'1 saat 12 dk kaldı'}
             </Text>
           </View>
         </View>
@@ -430,12 +431,12 @@ export default class Tab2 extends React.PureComponent {
             {
               this.state.myList.length == 0 ? 
               <View>
-                <Text style={[fontStyles.footnoteBold, {color: Colors.pepsiGray.alpha05, marginHorizontal: width * 0.066, lineHeight: 20, marginTop: width * 0.02}]}>
+                <Text style={[fontStyles.subhead, {fontWeight: "500", color: Colors.pepsiGray.alpha07, marginHorizontal: width * 0.066, lineHeight: 20, marginTop: width * 0.02}]}>
                   Listenize şarkılar ekleyerek kazanmaya başlayın.
                 </Text>
                 <TouchableOpacity activeOpacity={0.9} style={styles.createListButton} onPress={()=>this.transformModal(1)}>
                   <Feather name='plus' size={32} color={Colors.pepsiDarkBlue.alpha1}/>
-                  <Text  style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1, marginTop: width *0.033}]}>
+                  <Text  style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1, marginLeft: 10}]}>
                     {'Şarkı Ekle'}
                   </Text>
                 </TouchableOpacity>
@@ -726,13 +727,15 @@ const styles = StyleSheet.create({
   createListButton: {
     width: width * 0.85,
     borderWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
     borderColor: Colors.pepsiDarkBlue.alpha1,
     borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: width * 0.05,
+    paddingVertical: width * 0.04,
     alignSelf: 'center',
     marginTop: width * 0.05,
-    borderRadius: 10
+    borderRadius: 120
   },
 })

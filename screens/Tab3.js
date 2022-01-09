@@ -96,12 +96,15 @@ export default function Tab3(props){
           <View>
 
             <View style={styles.headerContainer}>
-              <Text style={[fontStyles.title3, {color: Colors.pepsiBlack.alpha1, fontWeight: '400'}]}>
-                Pepsi Puan
-              </Text>
-              <Text style={[fontStyles.title1, {color: Colors.pepsiBlack.alpha1, fontWeight: '400', marginTop: width * 0.05}]}>
-                72000
-              </Text>
+              <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between",}}>
+                <Text style={[fontStyles.title3, {color: Colors.pepsiBlack.alpha1, fontWeight: '400'}]}>
+                  Pepsi Puan
+                </Text>
+                <Text style={[fontStyles.title1, {color: Colors.pepsiBlack.alpha1, fontWeight: '700',}]}>
+                  1984
+                </Text>
+              </View>
+              
               {switcher()}
             </View>
             <View style={{paddingHorizontal: width * 0.066, width: '100%'}}>  
@@ -158,7 +161,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    height: Constants.statusBarHeight + 54,
+    height: Constants.statusBarHeight + 48,
     shadowColor: Colors.pepsiBlack.alpha1,
     shadowOffset: {width: 0, height: 0.5},
     shadowOpacity: 0.2,

@@ -421,7 +421,6 @@ export default class Tab2 extends React.PureComponent {
   screen1 = () => {
     return (
       <View style={[styles.screenContainer]}>
-        <StatusBar barStyle='light-content'/>
         <ScrollView
           style={{flex: 1}}
           contentContainerStyle={{paddingTop: width * 0.075, paddingBottom: width * 0.1}}

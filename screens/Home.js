@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar, Animated, Easing } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar, Platform, Animated, Easing } from 'react-native';
 import { width, height } from '../utils/Constants'
 import {Ionicons} from '@expo/vector-icons'
 import Colors from '../utils/Colors'
@@ -38,13 +38,18 @@ export default class Home extends React.PureComponent{
     }
     this.state={
       selectedTab: 0,
-      barStyle: "light-content",
-      isWalletAnimating: false
+      barStyle: Platform.OS == 'android' ? 'dark-content' : "dark-content",
+      isWalletAnimating: false,
+      backgroundColor: 'white'
     }
   }
 
   onTabPressed = (index) => {
-    this.setState({selectedTab: index, barStyle: index == 1 ? "light-content" : "dark-content"}, () => {
+    this.setState({
+      selectedTab: index, 
+      barStyle: index == 1 ? "light-content" : "dark-content",
+      backgroundColor: index == 1 ? Colors.pepsiDarkBlue.alpha1 : 'white'
+    }, () => {
       this.scrollRef.scrollTo({x: width * index, y: 0, animated: false})
     })
   }
@@ -92,7 +97,7 @@ export default class Home extends React.PureComponent{
   render(){
     return (
       <View style={styles.container}>
-        <StatusBar barStyle={this.state.barStyle} animated />
+        <StatusBar barStyle={this.state.barStyle} animated={Platform.OS === 'ios'} backgroundColor={this.state.backgroundColor}/>
         <ScrollView 
           style={{flex: 1}}
           horizontal

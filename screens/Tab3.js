@@ -1,5 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
 import { width, height } from '../utils/Constants'
 import API from '../utils/API'
@@ -7,13 +6,23 @@ import Constants from 'expo-constants';
 import Colors from '../utils/Colors';
 import fontStyles from '../utils/FontStyles';
 import {UserContext} from '../utils/Context';
+import {Feather} from '@expo/vector-icons'
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+
 
 export default function Tab3(props){
   const [gifts, setGifts] = useState([])
   const [selected, setSelected] = useState(0)
   const transformVal = useSharedValue(0)
   const [refreshing, setRefreshing] = useState(false)
+  const [totalCoin, setTotalCoin] = useState(198)
+  const iteration = useRef(0)
+
+  const [actions, setActions] = useState([
+    {title: 'Dinleme sınırını yükselt', subText: 'Günlük kazanılan puan kotasını arttır.', coin: 40},
+    {title: 'Listeni Genişlet', subText: 'Listene 5 şarkı daha\nekleme hakkı kazan.', coin: 70},
+    {title: 'Podcastleri Aç', subText: 'Dinlediğin podcastlerden de puan kazanmaya başla.', coin: 100, shouldRemove: true}
+  ])
 
   const {user, setUser} = useContext(UserContext)
 
@@ -67,12 +76,38 @@ export default function Tab3(props){
     )
   }
 
+  const spendCoin = (coin) => {
+    const timer = setTimeout(() => {
+      console.log(iteration.current)
+      if(iteration.current === coin){
+        iteration.current = 0
+        clearTimeout(timer)
+      }else{
+        setTotalCoin(totalCoin => totalCoin - 1)
+        iteration.current++
+        spendCoin(coin)
+      }
+    }, 16);
+  } 
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={[fontStyles.title2, {color: Colors.pepsiBlack.alpha1, fontWeight: '400'}]}>
           {'Cüzdanım'}
         </Text>
+      </View>
+      <View style={styles.headerContainer}>
+        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between",}}>
+          <Text style={[fontStyles.title3, {color: Colors.pepsiBlack.alpha1, fontWeight: '400'}]}>
+            Pepsi Puan
+          </Text>
+          <Text style={[fontStyles.title1, {color: Colors.pepsiBlack.alpha1, fontWeight: '700',}]}>
+            {totalCoin}
+          </Text>
+        </View>
+        
+        {switcher()}
       </View>
       <ScrollView
         style={{flex: 1}}
@@ -84,71 +119,79 @@ export default function Tab3(props){
       >
         {
           (!user) ?
-
           <View style={{marginHorizontal: 40, marginTop: 100}}>
             <Text style={{color: 'rgb(70,70,70)', fontSize: 18, textAlign: 'center', lineHeight: 26}}>
               Puanlarınızı ve hediyelerinizi görüntülemek için giriş yapmalısınız.
             </Text>
           </View>
-
           :
-
-          <View>
-
-            <View style={styles.headerContainer}>
-              <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between",}}>
-                <Text style={[fontStyles.title3, {color: Colors.pepsiBlack.alpha1, fontWeight: '400'}]}>
-                  Pepsi Puan
-                </Text>
-                <Text style={[fontStyles.title1, {color: Colors.pepsiBlack.alpha1, fontWeight: '700',}]}>
-                  1984
+          selected === 0 ?
+          //
+          <View style={{paddingHorizontal: width * 0.066, width: '100%'}}>  
+            {
+              gifts.length === 0 ?
+              <View style={{marginHorizontal: 40, marginTop: 100}}>
+                <Text style={{color: 'rgb(70,70,70)', fontSize: 18, textAlign: 'center', lineHeight: 26}}>
+                  Henüz hiçbir hediye kazanmadınız. Hediye kazanmak için PepsiCo ürünlerinden çıkan kodu okutun.
                 </Text>
               </View>
               
-              {switcher()}
-            </View>
-            <View style={{paddingHorizontal: width * 0.066, width: '100%'}}>  
-              {
-                gifts.length == 0 ?
-
-                <View style={{marginHorizontal: 40, marginTop: 100}}>
-                  <Text style={{color: 'rgb(70,70,70)', fontSize: 18, textAlign: 'center', lineHeight: 26}}>
-                    Henüz hiçbir hediye kazanmadınız. Hediye kazanmak için PepsiCo ürünlerinden çıkan kodu okutun.
-                  </Text>
-                </View>
-                
-                
-                :
-
-
-                gifts.map((item, index)=>{
-                  return (
-                    <View key={index + "dde"} style={styles.gift}>
-                      <View style={styles.giftHeader}>
-                        <Text style={[fontStyles.footnoteLight, {  marginRight: 20,color: Colors.pepsiDarkBlue.alpha1}]}>
-                          {item.campaignName}
+              :
+              gifts.map((item, index)=>{
+                return (
+                  <View key={index + "dde"} style={styles.gift}>
+                    <View style={styles.giftHeader}>
+                      <Text style={[fontStyles.footnoteLight, {  marginRight: 20,color: Colors.pepsiDarkBlue.alpha1}]}>
+                        {item.campaignName}
+                      </Text>
+                    </View>
+                    <View style={{flexDirection: 'row', paddingHorizontal: width * 0.033, paddingVertical: width * 0.05, alignItems: 'center',}}>
+                      <Image resizeMode='contain' source={{uri: item.imageUrl}} style={{width: width * 0.2, height: width * 0.2}}/>
+                      <View style={{marginLeft: width * 0.05, flex: 1}}>
+                        <Text style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1, lineHeight: 28, marginRight: 20}]}>
+                          {item.name}
+                        </Text>
+                        <Text style={[fontStyles.subhead2, {color: Colors.pepsiBlack.alpha1, marginTop: width * 0.033, width: '60%'}]}>
+                          {item.amount + ' ' + item.benefitType}
                         </Text>
                       </View>
-                      <View style={{flexDirection: 'row', paddingHorizontal: width * 0.033, paddingVertical: width * 0.05, alignItems: 'center',}}>
-                        <Image resizeMode='contain' source={{uri: item.imageUrl}} style={{width: width * 0.2, height: width * 0.2}}/>
-                        <View style={{marginLeft: width * 0.05, flex: 1}}>
-                          <Text style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1, lineHeight: 28, marginRight: 20}]}>
-                            {item.name}
-                          </Text>
-                          <Text style={[fontStyles.subhead2, {color: Colors.pepsiBlack.alpha1, marginTop: width * 0.033, width: '60%'}]}>
-                            {item.amount + ' ' + item.benefitType}
-                          </Text>
-                        </View>
-                      </View>
-                      <TouchableOpacity style={styles.upgradeButton}>
-                        <Image source={require('../assets/power-up.png')} style={{width: 30,  height: 30}} resizeMode='cover'/>
-                        
-                      </TouchableOpacity>
                     </View>
-                  )
-                })
-              }
-            </View>
+                    <TouchableOpacity style={styles.upgradeButton}>
+                      <Image source={require('../assets/power-up.png')} style={{width: 30,  height: 30}} resizeMode='cover'/>
+                    </TouchableOpacity>
+                  </View>
+                )
+              })
+            }
+          </View>
+          :
+          //
+          <View style={{flex: 1, width: width}}>
+            {
+              actions.map((item,index)=>{
+                return (
+                  <View key={'d' + index} style={styles.improveButton}>
+                    <View style={{ flex: 1}}>
+                      <Text style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1}]}>
+                        {item.title}
+                      </Text>
+                      <View style={{flexDirection: 'row',  marginTop: width * 0.033, width: '100%'}}>
+                        <Feather name={'info'} size={18} color={Colors.pepsiDarkBlue.alpha1} style={{marginTop: 3}}/>
+                        <Text style={[fontStyles.footnoteLight, {lineHeight: 18, color: Colors.pepsiDarkBlue.alpha1,  width: '70%', marginLeft: width * 0.02}]}>
+                          {item.subText}
+                        </Text>
+                      </View>
+                    </View>
+                    <TouchableOpacity style={{alignItems: 'center'}} activeOpacity={0.9} onPress={()=>spendCoin(item.coin)}>
+                      <Image source={require('../assets/lottie/coins.png')} style={{width: 40, height: 40}}/>
+                      <Text style={[fontStyles.body, {color: Colors.pepsiDarkBlue.alpha1}]}>
+                        {item.coin}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )
+              })
+            }
           </View>
         }
       </ScrollView>
@@ -197,7 +240,6 @@ const styles = StyleSheet.create({
     position: 'absolute'
   },
   headerContainer: {
-    flex: 1, 
     width: width, 
     paddingHorizontal: width * 0.066, 
     paddingTop: width * 0.05,
@@ -235,4 +277,19 @@ const styles = StyleSheet.create({
     right: width * 0.033,
     bottom: width * 0.033
   },
+  improveButton: {
+    width: width * 0.85,
+    paddingVertical: width * 0.033,
+    borderRadius: 10,
+    backgroundColor: 'white',
+    alignSelf: 'center',
+    alignItems: 'center',
+    marginTop: width * 0.05,
+    paddingHorizontal: width * 0.05,
+    shadowColor: Colors.pepsiDarkBlue.alpha1,
+    shadowOpacity: 0.3,
+    shadowOffset: {width: 1, height: 1},
+    shadowRadius: 1,
+    flexDirection: 'row'
+  }
 })
